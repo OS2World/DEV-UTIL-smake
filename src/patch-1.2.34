@@ -1,0 +1,102 @@
+diff -ubBr smake-1.2.34.0/DEFAULTS/Defaults.os2 smake-1.2.34/DEFAULTS/Defaults.os2
+--- smake-1.2.34.0/DEFAULTS/Defaults.os2	Sun Feb 16 01:01:48 2003
++++ smake-1.2.34/DEFAULTS/Defaults.os2	Sun May 14 17:07:08 2006
+@@ -27,7 +27,7 @@
+ # Installation config stuff
+ #
+ ###########################################################################
+-INS_BASE=	/opt/schily
++INS_BASE=	/usr/local/smake
+ INS_KBASE=	/
+ #
+ DEFUMASK=	002
+Only in smake-1.2.34/inc: OBJ
+Only in smake-1.2.34/incs: Dcc.i386-os2
+Only in smake-1.2.34/incs: i386-os2-gcc
+Only in smake-1.2.34/lib: OBJ
+Only in smake-1.2.34/libs: i386-os2-gcc
+Only in smake-1.2.34/man/man4: OBJ
+Only in smake-1.2.34/psmake: archconf.o
+Only in smake-1.2.34/psmake: astoi.o
+Only in smake-1.2.34/psmake: astoll.o
+Only in smake-1.2.34/psmake: comerr.o
+Only in smake-1.2.34/psmake: config.cache
+Only in smake-1.2.34/psmake: config.log
+Only in smake-1.2.34/psmake: config.status
+Only in smake-1.2.34/psmake: cvmod.o
+Only in smake-1.2.34/psmake: dat.o
+Only in smake-1.2.34/psmake: error.o
+Only in smake-1.2.34/psmake: fcons.o
+Only in smake-1.2.34/psmake: fileopen.o
+Only in smake-1.2.34/psmake: fileread.o
+Only in smake-1.2.34/psmake: fileseek.o
+Only in smake-1.2.34/psmake: filewrite.o
+Only in smake-1.2.34/psmake: fillbytes.o
+Only in smake-1.2.34/psmake: flag.o
+Only in smake-1.2.34/psmake: format.o
+Only in smake-1.2.34/psmake: getargs.o
+Only in smake-1.2.34/psmake: geterrno.o
+Only in smake-1.2.34/psmake: jsprintf.o
+Only in smake-1.2.34/psmake: jssnprintf.o
+Only in smake-1.2.34/psmake: make.o
+Only in smake-1.2.34/psmake: memory.o
+Only in smake-1.2.34/psmake: movebytes.o
+Only in smake-1.2.34/psmake: niread.o
+Only in smake-1.2.34/psmake: parse.o
+Only in smake-1.2.34/psmake: printf.o
+Only in smake-1.2.34/psmake: raisecond.o
+Only in smake-1.2.34/psmake: readfile.o
+Only in smake-1.2.34/psmake: rename.o
+Only in smake-1.2.34/psmake: rules.cnf
+Only in smake-1.2.34/psmake: rules.o
+Only in smake-1.2.34/psmake: saveargs.o
+Only in smake-1.2.34/psmake: seterrno.o
+Only in smake-1.2.34/psmake: smake
+Only in smake-1.2.34/psmake: smake.exe
+Only in smake-1.2.34/psmake: snprintf.o
+Only in smake-1.2.34/psmake: sprintf.o
+Only in smake-1.2.34/psmake: strcatl.o
+Only in smake-1.2.34/psmake: streql.o
+Only in smake-1.2.34/psmake: update.o
+Only in smake-1.2.34/psmake: xconfig.h
+diff -ubBr smake-1.2.34.0/RULES/i386-os2-gcc.rul smake-1.2.34/RULES/i386-os2-gcc.rul
+--- smake-1.2.34.0/RULES/i386-os2-gcc.rul	Sun May 15 01:30:20 2005
++++ smake-1.2.34/RULES/i386-os2-gcc.rul	Sat May  6 13:11:16 2006
+@@ -30,7 +30,7 @@
+ #
+ #		Using -Zcrtdll is a hack to allow this flag to be seen
+ #		from configure too.
+-COPTS=		-Zcrtdll
++COPTS=		-Zcrtdll -Zomf
+ CWOPTS=		-Wall -Wtraditional \
+ 		-Wshadow -Wmissing-prototypes -Wstrict-prototypes
+ COPTOPT=	-O
+@@ -52,7 +52,7 @@
+ 
+ LIBS_PATH=	-L$(OLIBSDIR)
+ 
+-LDFLAGS=	$(LDOPTS) $(LDOPTX)
++LDFLAGS=	$(LDOPTS) $(LDOPTX) -Zmap -Zomf -Zargs-wild -Zargs-resp
+ LDLIBS=		$(LIBS) $(LIBX)
+ 
+ #LDOPTS=		$(LIBS_PATH) $(LDPATH) $(RUNPATH)
+@@ -65,10 +65,16 @@
+ FLOAT_OPTIONS=	
+ 
+ 
++LN=		ln
++SYMLINK=	ln -s
++RM=		rm
++MV=		mv
++
+ CC=		@echo "	==> COMPILING \"$@\""; gcc
+-LDCC=		@echo "	==> LINKING \"$@\""; gcc -Zcrtdll
+-DYNLD=		@echo "	==> LINKING dynamic library \"$@\""; gcc
++LDCC=		@echo "	==> LINKING \"$@\""; gcc -Zexe
++DYNLD=		@echo "	==> LINKING dynamic library \"$@\""; gcc -Zdll
+ RANLIB=		@echo "	==> RANDOMIZING ARCHIVE \"$@\""; true
++AR=		@echo "	==> ARCHIVING  \"$@\""; emxomfar
+ 
+ 
+ ARFLAGS=	cr
+Only in smake-1.2.34/smake: OBJ

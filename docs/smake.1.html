@@ -1,0 +1,1406 @@
+<HTML><HEAD>
+<TITLE>e:\usr\local\smake\man\man1\smake.1</TITLE>
+<BODY bgcolor=#F0F0F0 text=#000000 link=#0000ff vlink=#C000C0 alink=#ff0000><A NAME=top></A>
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<CENTER>
+<H1><HR><I>Manual Reference Pages &nbsp;-&nbsp;</I><NOBR>SMAKE (1)</NOBR><HR></H1>
+</CENTER>
+<A name=0>
+
+     <H3>NAME</H3>
+
+</A>
+<BLOCKQUOTE>
+smake - maintain, update, and regenerate programs
+</BLOCKQUOTE>
+<A name=contents></A><H3>CONTENTS</H3></A>
+<BLOCKQUOTE>
+<A HREF=#1>Synopsis</A><BR>
+<A HREF=#2>Description</A><BR>
+<A HREF=#3>Options</A><BR>
+<A HREF=#4>Basics</A><BR>
+<A HREF=#5>Environment</A><BR>
+<A HREF=#6>Files</A><BR>
+<A HREF=#7>Notes</A><BR>
+<A HREF=#8>Bugs</A><BR>
+<A HREF=#9>Author</A><BR>
+</BLOCKQUOTE>
+<A name=10>
+
+     <H3>SYNOPSIS</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>smake</B> [
+<I>options</I> ] [
+<B>-f</B><I> makefilename</I> ] [
+<I>target</I>1...<I>target</I>n ]
+<P>
+</BLOCKQUOTE>
+<A name=2>
+
+     <H3>DESCRIPTION</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>Smake</B> executes command sequences based on relations of modification dates of files.
+The command sequences are taken from a set of rules found in a
+<I>makefile</I> or in the set of implicit rules.
+The argument
+<I>target</I> is typically a program that is to be built from the known rules.
+<P>
+If no
+<I>-f</I> option is present,
+<B>smake</B> looks for
+<I>SMakefile</I> then for
+<I>Makefile</I> and then for
+<I>makefile</I> in the named order.
+<P>
+If no
+<I>target</I> is specified on the command line,
+<B>smake</B> uses the first target that could be found in
+<I>makefilename</I> and that does not start with a dot (&#146;.&#146;).
+<P>
+If a
+<I>target</I> has no explicit entry in the
+<I>makefile</I> <B>smake</B> tries to use implicit rules or the
+<B>.DEFAULT</B> rule.
+<P>
+Unlike most other make programs,
+<B>smake</B> propagates all command line macros to sub makes.
+This is a big advantage with hierarchical makefile systems.
+Propagation is done in a
+<B>POSIX</B> compliant way using the
+<B>MAKEFLAGS=</B> environment.
+<P>
+Unlike other make programs,
+<B>smake</B> includes a set of
+<I>automake</I> features that allow to implement portable, layered, object oriented makefiles.
+<P>
+<P>
+</BLOCKQUOTE>
+<A name=3>
+
+     <H3>OPTIONS</H3>
+
+</A>
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD width=6% nowrap>
+<B>-e</B> </TD><TD valign=bottom>
+Environment variables override macro definition in Makefile(s).
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-i</B> </TD><TD valign=bottom>
+Ignore error codes returned by commands that are called from rules.
+This is equivalent to having the special target
+<B>.IGNORE:</B> inside a makefile.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-k</B> </TD><TD valign=bottom>
+Ignore errors by aborting work on the current target and continuing the
+work on other targets that do not depend on the failed target.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-N</B> </TD><TD valign=bottom>
+Continue if a named dependency does not exist and no related source
+could be found.
+<B>Smake</B> by default aborts on this condition, but it seems that traditional UNIX
+make programs ignore this condition for unknown reason.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-n</B> </TD><TD valign=bottom>
+Don&#146;t make - only say what to do.
+This prints the commands that would be executed on standard output.
+Lines with a plus sign (&#146;+&#146;) will be executed in any case.
+Even those lines that have an at sign (&#146;@&#146;) will be printed to standard output.
+This is the opposite to the
+<B>-s</B> option.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-p</B> </TD><TD valign=bottom>
+Print the complete set of macro and target definitions on standard output.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-q</B> </TD><TD valign=bottom>
+Question mode. Exit code is 0 if the target is up to date. In all other
+cases, the exit code is 1.
+Lines with a plus sign (&#146;+&#146;) will be executed in any case.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-r</B> </TD><TD valign=bottom>
+Turn off internal rules.
+Do not use the built in rules and do not read the files
+<B>./defaults.smk</B> and
+<B>/opt/schily/lib/defaults.smk</B> </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-S</B> </TD><TD valign=bottom>
+Undo the effect of the -k option and terminate
+<B>smake</B> if an error occurs while updating targets.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-s</B> </TD><TD valign=bottom>
+Be silent. (Do not print command lines or touch messages
+on standard output before they are executed.)
+This is equivalent to having the special target
+<B>.IGNORE:</B> inside a makefile.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-t</B> </TD><TD valign=bottom>
+Touch objects instead of executing the defined commands.
+This brings a target up to date by simply setting the modification
+time of the targets.
+Targets that do not have a command associated are not touched.
+The command lines that are associated with a target are not executed.
+Lines with a plus sign (&#146;+&#146;) will be executed in any case.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-w</B> </TD><TD valign=bottom>
+Don&#146;t print warning messages.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-W</B> </TD><TD valign=bottom>
+Print extra debug messages and warning messages.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-D</B> </TD><TD valign=bottom>
+Display Makefiles as they are read in.
+This allows to debug the effective
+<I>makefile</I> when the makefiles use
+<B>include</B> statements.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-DD</B> </TD><TD valign=bottom>
+Display Makefiles and internal rules as they are read in.
+This is the same as specifying
+<B>-D</B> but
+<B>smake</B> starts to print the effective makefile when reading the internal definitions.
+If
+<B>-DDD</B> is specified, the printout includes even the
+definitions of the environment variables as make macros.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-d</B> </TD><TD valign=bottom>
+Print the reason why a target has to be rebuilt.
+Also turns off external and internal silent flag.
+This special feature allows to write makefiles that usually
+suppress the printing of commands line (using a &#146;@&#146; at the
+start of a command line) as in debug mode
+<B>smake</B> undoes the effect of the &#146;@&#146; character.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-dd</B> </TD><TD valign=bottom>
+Print additional debugging messages.
+This includes the messages from the -d flag and additional
+messages that allow to trace the execution of the various rules.
+If more &#146;d&#146; characters are added (e.g.
+<B>-dddd</B>)<B>the</B>verbose<B>level</B>for<B>tracing</B>is<B>enhanced.</B> </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-xM</B> </TD><TD valign=bottom>
+Print the make file include dependency list.
+This options allows to trace complex makefiles that make heavy use
+of the
+<B>include</B> statement.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-xd</B> </TD><TD valign=bottom>
+Print extended debug messages.
+This is only useful, if you have
+internal knowledge to
+<B>smake</B> itself and want to do heavy debugging.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-probj</B> </TD><TD valign=bottom>
+Print the whole object tree.
+This is only useful, if you have
+internal knowledge to
+<B>smake</B> itself and want to do heavy debugging.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-help</B> </TD><TD valign=bottom>
+Prints a short summary of the
+<B>smake</B> options and exists.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-version</B> </TD><TD valign=bottom>
+Prints the
+<B>smake</B> version number string and exists.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-posix</B> </TD><TD valign=bottom>
+Force
+<B>smake</B> to go into POSIX mode.
+This is equivalent to having the special target
+<B>.POSIX:</B> inside a makefile.
+The -posix option is not automatically propagated via
+<B>MAKEFLAGS</B>. <P>
+See the description of the special target
+<B>.POSIX:</B> for more information.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>-f</B><I> makefilename, </I><B>mf=</B><I>makefilename, </I><B>mf=</B><I></I><B>makefilename</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Specifies the Makefile.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>macro=value</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Set a macro. A macro definition on command line overrides any other
+macro definition.
+</TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>Options, command line macros and target name may be intermixed.
+<B>Smake</B> will always first evaluate all options then all command line macros and
+then will start building the targets.
+With
+<B>smake</B> it is not possible to first make one target, then set a command line macro and
+then make the next target with different macro values,
+<B>POSIX</B> does not specify the behaviour in this case anyway.
+<P>
+</BLOCKQUOTE>
+<A name=4>
+
+     <H3>BASICS</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+<B>Smake</B> maintains the dependency of a group of files by building a dependency
+tree of the targets (derived files) and the files that are the
+prerequisites of the targets (called the sources or the dependency list
+of files).
+A
+<I>makefile</I> contains a description of the relations of the targets and the prerequisites
+and the commands that should be executed to make the target up to date.
+<P>
+<PRE>
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo : main.o lex.o parse.o
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;main.o: main.c main.h
+</PRE>
+<P>
+The file
+<B>foo</B> depends on the files
+<B>main.o lex.o</B> and
+<B>parse.o</B> while
+<B>main.o</B> depends on
+<B>main.c</B> and
+<B>main.h</B>. This example describes a project in the C-programming language,
+but it is possible to maintain any project that depends on the modification
+time of the related files.
+<P>
+<B>Smake</B> considers a file up to date if it has been modified after the files
+it depends on (its prerequisites) and all files it depends on are recursively up
+to date too.
+If a file does not exit, it is considered to be out of date.
+The targets are processed in the order they appear in the dependency list.
+<P>
+For example, if
+<B>main.o</B> is newer than
+<B>foo</B>, then it is assumed that
+<B>foo</B> is not up to date.
+If
+<B>main.c</B> is newer than
+<B>main.o,</B> then it is assumed that both,
+<B>main.o</B> and
+<B>foo</B> are not up to date.
+<P>
+<B>Smake</B> updates all targets based on
+<B>rules</B>. A
+<B>rule</B> specifies a target and its prerequisites and defines a set of commands
+that allow to create an up to date target from its prerequisites.
+<P>
+If the target and its prerequisites are named explicitely, the rule
+is called an
+<B>explicit rule</B>. If the target and its prerequisites are named in an abstract way, the rule
+is called an
+<B>implicit rule</B>. <P>
+If
+<B>smake</B> is called to update a target, it first checks if an explicit rule for this
+target can be found. If there is no explicit rule for this target, then
+<B>smake</B> looks for an implicit rule. It checks the following methods of
+specifying an implicit rule until a suitable rule is found.
+Each method is described in section
+<B>Makefile Format</B> below XXX Implicit Rules ???.
+<TABLE cellpadding=3><!-- tsb: If
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+Pattern matching rules from a user supplied makefile.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+Suffix rules,
+either from a user supplied makefile or from the
+set of builtin rules.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+Simple suffix rules,
+either from a user supplied makefile or from the
+set of builtin rules.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+<B>SCCS</B> retrieval.
+If
+<B>smake</B> finds a more recent
+<B>SCCS</B> history file, it tries to retrieve the most recent version
+from the
+<B>SCCS</B> history. See the description of the
+<B>.SCCS_GET:</B> special target.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+The rule from the
+<B>.DEFAULT:</B> target entry, if such an entry exists in a makefile.
+</TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>A limited set of builtin rules is compiled into
+<B>smake</B>. A more complete set is read from the file
+<B>./defaults.smk</B> or
+<B>/opt/schily/lib/defaults.smk</B>. <P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>Makefile Format</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+<B></B> Smake
+reads its rules from a file named
+<B>SMakefile</B>,<B></B>Makefile or
+<B>makefile</B> in the current directory.
+If a different makefile is specified with the
+<B>-f</B> option,
+<B>smake</B> reads from this file.
+In case that no makefile was specified with the
+<B>-f</B> option, it is not an error if no makefile exists.
+In this case
+<B>smake</B> only uses the built in rules.
+The term
+<I>makefile</I> is used for any user supplied file that contains rules for the
+<B>make</B> utility.
+<P>
+A
+<B>makefile</B> contains rules, macro definitions, special make directives and comments.
+A rule may either be a target rule (explicit rule) or an implicit rule.
+<B>Smake</B> itself contains a number of built in implicit rules which are not used
+if the
+<B>-r</B> option is used. The user specified
+<I>makefile</I> defines additional explicit and implicit rules and macros.
+If a macro is defined more than once, the last definition is used.
+If a target rule is defined more than once, the dependency list is the
+sum of all dependency lists and the set of commands is the
+set of commands from the last specification.
+A back slash (&#146;&#92;&#146;) at the end of a line indicates that this line
+is to be continued on the next line.
+XXX An escaped newline is replaced by a single space character
+XXX and the white space at the beginning of the next line is removed. XXX
+A comment starts with a hash mark (&#146;#&#146;) and ends if an un-escaped
+new line is found.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Command Execution</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Target rules</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+A target rule looks this way:
+<P>
+<!-- ignored unsupported tag .ne -->
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD colspan=2>
+<I>target</I> ... <B>:</B> [<I>dependency</I>] ... [<B>;</B> <I>command</I>] ... <PRE>
+[&lt;tab&gt; <I>command</I>] 
+...
+</PRE>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<P>
+The first line may not start with a TAB character.
+It starts with a
+<I>target name</I> or a white space separated list of
+<I>target names</I>, in both cases followed by a target separator
+(&#146;:&#146;).
+The colon may be followed by a
+<I>dependency name</I> or a white space
+separated list of
+<I>dependency names</I>. The dependency list may be followed by a semicolon (&#146;;&#146;) and a
+Bourne shell
+<I>command</I>. There may be additional lines with Bourne shell commands, all
+starting with a TAB. The first line that does not start with a TAB
+starts another definition.
+<P>
+Bourne shell commands may be continued over more than one line if
+the new line is escaped with a back slash. The next line must also
+start with a TAB character.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Make directives</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+<TABLE cellpadding=3>
+<TR valign=top><TD width=6% nowrap>
+<B>export</B> </TD><TD valign=bottom>
+XXX lkfglsdfg
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>include</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+XXX lkfglsdfg
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>-include</B> </TD><TD valign=bottom>
+XXX lkfglsdfg
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>readonly</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+XXX sdfsdfsda
+<P>
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>SEARCHING RULES FOR FILES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+In many cases, it is desirable to hold object files in a special
+directory which is different from the directory where the source
+files are located.
+For this reason,
+<B>smake</B> allows to specify a directory where all targets are placed in case they are
+a result of an implicit rule.
+Add
+<P>
+<B>&#46;OBJDIR:</B><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object_directory</I> <P>
+to the
+<B>makefile</B> to activate this
+<B>smake</B> feature.
+If a
+<B>makefile</B> uses this feature, it must either explicitely use the right
+file names (including the object directory) or use dynamic macros
+that are automatically updated to include the path of the
+object directory.
+If
+<B>smake</B> uses file name searching, the dynamic macros
+<B>$&lt;</B>, <B>$0</B>, <B>$</B><I>n</I>, <B>$r1</B>, <B>$^</B>, and <B>$?</B> are updated to reflect the
+actual path of the source or object directory.
+<P>
+A line of the form:
+<P>
+<B>&#46;SEARCHLIST:</B><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source_directory_1 object_directory_1</I> &#46;..
+<P>
+that contains pairs of source and corresponding object directory
+names, will cause
+<B>smake</B> not only to search for files in the current directory and in
+the directory which is pointed to by
+<B>.OBJDIR</B>, but also in the directories from
+<B>.SEARCHLIST</B>. <B>Smake</B> first looks in the current directory, then in the directory pointed to
+by
+<B>.OBJDIR</B> and then in the directories from
+<B>.SEARCHLIST</B>. <P>
+If a source could be found in a specific source directory of the
+list of source and object directories,
+the targets will only be looked for in the corresponding object
+directory.
+A result of a source, which is found in any of the
+source-directories of the
+<B>.SEARCHLIST</B> is placed into the
+corresponding object-directory.
+<P>
+A line in the form:
+<P>
+<B>&#46;OBJSEARCH:</B><I>value</I> <P>
+Where
+<I>value</I> may be one of
+<I>src, obj, all.</I> causes
+<B>smake</B> to look for left-hand-sides of rules in only the
+<B>source-directories,</B> the
+<B>object-directories</B> or
+<B>both</B>. The default value for
+<B>&#46;OBJSEARCH</B> is:
+<B>all</B>. That causes
+<B>smake</B> to search for results in object-directories and source-directories.
+<P>
+If no
+<B>.SEARCHLIST:</B> target exists, but a
+<B>VPATH=</B> macro is found,
+<B>smake</B> transforms the content of the
+<B>VPATH=</B> macro into a form suitable for
+<B>.SEARCHLIST:</B>. This is done by putting each
+<B>VPATH=</B> entry twice into the
+<B>.SEARCHLIST</B>. Please report problems with this solution.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>VARIABLE SUBSTITUTION</H3>
+
+</A>
+<BLOCKQUOTE>
+Any variable defined by a line in the form:
+<P>
+<B>varname=</B><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;val</I> <P>
+may referenced by either:
+<B>$(</B><I>varname</I><B>)</B> or
+<B>${</B><I>varname</I><B>}.</B> <P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>Special Targets</H3>
+
+</A>
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD colspan=2>
+<B>&#46;DEFAULT:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+If a
+<I>target</I> is considered to be out of date and no other rule applies to this
+target,
+<B>smake</B> executes the commands from this special target.
+The
+<B>&#46;DEFAULT</B> target may not have a dependency list.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>&#46;DONE:</B> </TD><TD valign=bottom>
+If this special target is present,
+<B>smake</B> executes the commands after all targets have been processed.
+The
+<B>&#46;DONE</B> target is also executed if a failure occurs and no
+<B>&#46;FAILED</B> target is present.
+The
+<B>&#46;DONE</B> target may not have a dependency list.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;FAILED:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+If this special target is present and an error occurred,
+<B>smake</B> executes the commands instead of the the commands of the
+<B>&#46;DONE</B> target after all targets have been processed.
+The
+<B>&#46;FAILED</B> target may not have a dependency list.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;GET_POSIX</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;IGNORE:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Ignore errors. If this special target is present,
+<B>smake</B> behaves as if it was called with the -i flag.
+<P>
+<FONT size=-1>POSIX</FONT> requires that
+<B>&#46;IGNORE</B> only applies to some targets if they are in the list of dependencies
+of the
+<B>&#46;IGNORE</B> target.
+<B>Smake</B> currently does not implement this
+<FONT size=-1>POSIX</FONT> behaviour.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;INCLUDEFAILED:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This special target implements
+<B>automake</B> features for object oriented layered makefiles.
+If this target is present,
+<B>smake</B> executes the commands for this target
+if a make file could not be included and there
+was no rule that could create the the missing make include file.
+The
+<B>&#46;INCLUDEFAILED</B> target may not have a dependency list.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>&#46;INIT:</B> </TD><TD valign=bottom>
+If this target is present, the target and its dependencies are built before
+any other target is made.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;KEEP_STATE</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved by SunPRO make. Don&#146;t use this target to avoid problems with
+the SCHILY (Sing) makefile system.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;KEEP_STATE_FILE</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved by SunPRO make. Don&#146;t use this target to avoid problems with
+the SCHILY (Sing) makefile system.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;MAKE_VERSION</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use. Future versions of
+<B>smake</B> may implement this special target in a way similar to SunPRO make.
+<P>
+A special target of the form:
+<TABLE width=100% cellpadding=3><!-- tsb: A special target of the form:
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=6%>
+
+</TD><TD>
+<B><FONT size=-1>.MAKE_VERSION:</FONT>&nbsp;&nbsp;<FONT size=-1>smake-</FONT></B><I>number</I> </TD></TR>
+<TR></TR></TABLE></TD></TR>
+<TR valign=top><TD width=6%>
+
+</TD><TD>
+forces to check the version of
+<B>smake</B>. If the version of
+<B>smake</B> differs from the version in the dependency list,
+<B>smake</B> issues a warning message.
+The actual version of
+<B>smake</B> is
+<I>smake-1.0</I> </TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;NO_PARALLEL</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;OBJDIR:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+If this special target is present,
+<B>smake</B> assumes that all files that have been created by a rule should be
+placed in a special directory called the object directory.
+The object directory is the only member of the dependency list
+of the
+<B>&#46;OBJDIR</B> target.
+<B>Smake</B> moves the targets automatically into that directory.
+Automatic macros like $^, $?, $r1 are automatically modified in
+a way that allows transparent use of the object directory.
+If
+<B>&#46;OBJDIR</B> is not specified, it is assumed to be the current directory &#146;.&#146;.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;OBJSEARCH:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This target may hold one of three predefined values:
+<B>src</B>, <B>obj</B> and <B>all</B>. It defines where objects (targets of a rule) are searched for.
+The default for .OBJSEARCH is to look for targets in both
+(source and object) directories or directory lists.
+See also
+<B>&#46;SEARCHLIST</B> for a description of the src and obj directories.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;PARALLEL</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>&#46;POSIX:</B> </TD><TD valign=bottom>
+If this special target is found, POSIX mode is enabled.
+<P>
+With this option the verbose command lines written to the
+<I>stdout</I> stream are prefixed by a TAB character instead of three dots (...).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;PRECIOUS:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro holds a list of targets that should not be removed while they
+are built if
+<B>sake</B> receives a signal.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>&#46;PHONY:</B> </TD><TD valign=bottom>
+This macro holds a list of targets that should not be checked against existing
+files. A target that is marked
+<B>&#46;PHONY</B> will always considered to be out of date. If
+<B>smake</B> receives a signal, targets marked as
+<B>&#46;PHONY</B> are not removed.
+If
+<B>smake</B> is called with the
+<B>-t</B> (touch) option, the targets marked as
+<B>&#46;PHONY</B> are not touched.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;SCCS_GET:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;SCCS_GET_POSIX</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;SEARCHLIST:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+<B>&#46;SEARCHLIST</B> is a list of alternate source and object directories
+where
+<B>smake</B> should look for targets.
+This macro may be used as an extended replacement of the
+<B>VPATH=</B> macro of other make programs.
+The macro
+<B>&#46;SEARCHLIST</B> holds a list of
+<I>srcdir  /  objdir</I> pairs.
+The complete internal list is build from &#146;.&#146; .OBJDIR and the
+content of .SEARCHLIST.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;SILENT:</B> <!-- Consumed .TP -->
+<BR>
+<B>&#46;SUFFIXES:</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>&#46;SYM_LINK_TO</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Reserved for future use.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>&#46;WAIT</B> </TD><TD valign=bottom>
+Reserved for future use.
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Special Macros</H3>
+
+</A>
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD width=6% nowrap>
+<B>MAKE</B> </TD><TD valign=bottom>
+This macro contains a path name that is sufficient to recursively
+call the same
+<I>make</I> program again (either that last path component or the full path
+name of the make program).
+Note that this may differ from the name that was used on the command line
+if the name that was used on the command line would not allow to call the
+same
+<I>make</I> program from a different directory using this name.
+For this reason
+<I>$(MAKE)</I> may not be used to check for a specific
+<I>make</I> program. Use
+<B>$(MAKE_NAME)</B> instead.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKEFLAGS</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro contains the command line flags and the command line macros
+<B>smake</B> is called with.
+The
+<B>MAKEFLAGS</B> macro is exported into the environment to allow automatic propagation of
+<I>make</I> flags and command line macros to sub make programs.
+The content of this macro is
+<B>POSIX</B> compliant.
+<P>
+If there were no command line flags or command line macros, the
+<B>MAKEFLAGS</B> macro is empty.
+<P>
+If there were only command line flags, the
+<B>MAKEFLAGS</B> macro contains a concatenation of the single char versions of the
+flags. A hyphen is the first char, so
+<B>MAKEFLAGS</B> would be suitable as a command line flag in this case.
+A typical
+content may look this way:
+<!-- Need break --><BR>
+<B>-id</B>. <P>
+If there were only command line macros, the
+<B>MAKEFLAGS</B> macro contains a concatenation of the macro specifications.
+The different macro specifications are separated by a space.
+Any occurrence of a space or a back slash inside a macro specification
+is escaped by a back slash.
+A typical
+content may look this way:
+<!-- Need break --><BR>
+<B>CC=gcc COPTX=-DTEST&#92; -DDEBUG</B>. <P>
+If both command line flags and command line macros are used, the
+flag part is made as if there were only flags and the macro part
+is made as if there were only macros.
+The separator between the flag part and the macro part is a space,
+two hyphens and a space.
+A typical
+content may look this way:
+<!-- Need break --><BR>
+<B>-id -- CC=gcc COPTX=-DTEST&#92; -DDEBUG</B>. <P>
+As the
+<B>MAKEFLAGS</B> notation of the command line macros uses a special escape notation
+to allow to propagate any possible command line macro, it is not
+possible to call:
+<!-- Need break --><BR>
+<B>make $(MAKEFLAGS)</B> from a make file.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_MACS</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro contains the complete set of command line macros and the
+macros read from the
+<B>MAKEFLAGS</B> environment.
+The content is the same as the last part of the
+<B>MAKEFLAGS</B> macro which holds the macro part.
+The
+<B>MAKE_MACS</B> macro is exported into the environment.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_FLAGS</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro contains the command line flags
+<B>smake</B> is called with.
+The content is the same as the content of the
+<B>MAKEFLAGS</B> macro except that no command line macros are added.
+The
+<B>MAKE_FLAGS</B> macro is exported into the environment.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_ARCH</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the processor architecture of the current machine
+(e.g. mc68020, sparc, pentium).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_BRAND</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the brand of the current machine
+(e.g. Sun_Microsystems).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_HOST</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the host name of the current machine
+(e.g. duffy, sherwood, ghost).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_MACH</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the kernel architecture of the current machine
+(e.g. sun3, sun4c, sun4m, sun4u).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_MODEL</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the model name of the current machine
+(e.g. SUNW,SPARCstation-20).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_M_ARCH</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the machine architecture of the current machine
+(e.g. sun3, sun4).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_NAME</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the official name of the
+make program - in our case
+<B>smake</B>. </TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_OS</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the operating system name of the current machine
+(e.g. sunos, linux, dgux).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_OSDEFS</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains operating system specific defines for the compiler
+(e.g. -D__SVR4).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_OSREL</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the operating system release name of the current machine
+(e.g. 5.5, 4.1.1).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_OSVERSION</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the operating system version of the current machine
+(e.g. generic).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_SERIAL</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro is set up by
+<B>smake</B> as part of the
+<B>automake</B> features of
+<B>smake</B>. It contains the serial number of the current machine
+(e.g. 1920098175).
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>MAKE_VERSION</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+This macro contains the
+<B>smake</B> version number string.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>SHELL</B> </TD><TD valign=bottom>
+The
+<B>SHELL</B> macro is neither imported nor exported from/to the environment.
+If it is set from within a makefile or from the commandline, the
+value is used as the name of an alternate shell to execute commands.
+Makefiles that set
+<B>SHELL=</B> should be used very carefully as not all platforms support all shells.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>VPATH</B> </TD><TD valign=bottom>
+This macro implements some object search functionality as found in
+other UNIX make programs. In
+<B>smake</B> this functionality is implemented using the
+<B>.SEARCHLIST:</B> special target, see chapter
+<B>SEARCHING RULES FOR FILES</B> for more information.
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Dynamic Macros</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+There are several internal macros that are updated dynamically.
+Except
+<B>$O</B>, they cannot be overwritten. Using them in explicit rules makes the
+makefile more consistent as the file names do not have to be typed
+in a second time.
+Using them in implicit rules is the only way to make
+implicit rules work as the actual file name cannot be coded into
+an implicit rule.
+<P>
+If
+<B>smake</B> uses file name searching, the dynamic macros
+<B>$&lt;</B>, <B>$0</B>, <B>$</B><I>n</I>, <B>$r1</B>, <B>$^</B>, and <B>$?</B> are updated to reflect the
+actual path of the source or object directory.
+<P>
+The dynamic macros are:
+<TABLE cellpadding=3><!-- tsb: The dynamic macros are:
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$O</B> </TD><TD valign=bottom>
+expands to the value of
+&#46;OBJDIR<B>.</B> If
+<B>.OBJDIR</B> is not defined,
+<B>$O</B> expands to &#146;.&#146;.
+If
+<B>$O</B> has been overwritten, it may no longer be used as a reliable
+alias for
+<B>.OBJDIR</B>. </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$@</B> </TD><TD valign=bottom>
+expands to the path name of the current target.
+It is expanded for both explicit and implicit rules.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$*</B> </TD><TD valign=bottom>
+expands to the path base name of the current target (the
+name of the current target with the suffix stripped off).
+It is expanded for both explicit and implicit rules.
+<B>POSIX</B> requires that this macro is expanded at least for implicit rules.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$&lt;</B> </TD><TD valign=bottom>
+expands to the path name of implicit source made in this step.
+It is expanded for implicit rules only.
+The existence of this macro is required by
+<B>POSIX</B>. </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$0</B> </TD><TD valign=bottom>
+expands to the path name of implicit source made in this step.
+It is expanded for implicit rules only.
+This macro is available with
+<B>smake</B> only. It is made available to make the behaviour more orthogonal.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>$1 $2 $3 ...</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+expands to the path name of the nth file in the dependency list.
+It is expanded for explicit rules only.
+<P>
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$r</B><I>n</I> </TD><TD valign=bottom>
+expands to the path names of all files in the dependency list
+starting with the
+<I>n</I>th. It is valid to specify
+<B>$r0</B>. It is expanded for both explicit and implicit rules.
+The 0th entry is available only with implicit rules, the other
+entries ae available only with explicit rules.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$^</B> </TD><TD valign=bottom>
+expands to the path names of all files in the dependency list.
+It is identical to
+<B>$r1</B>. It is expanded for both explicit rules only.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>$?</B> </TD><TD valign=bottom>
+expands to the path names of all files outdated dependencies for this target.
+It is expanded for explicit rules only.
+<B>POSIX</B> requires that this macro is expanded for both explicit and implicit rules.
+</TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>The following example shows how dynamic macros may be used together with
+file searching rules:
+<P>
+<PRE>
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo : main.o lex.o parse.o
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(CC) -o $@ $^
+</PRE>
+<P>
+may expand to:
+<P>
+cc -o foo OBJ/main.o parser/OBJ/lex.o parser/OBJ/parse.o
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>IMPLICIT RULES</H3>
+
+</A>
+<BLOCKQUOTE>
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Pattern Matching Rules</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+Pattern matching rules have first been found in Sun&#146;s SunPRO make.
+They are now also inplemented in GNU make and
+<B>smake</B>. <P>
+A pattern matching rule looks this way:
+<P>
+<!-- ignored unsupported tag .ne -->
+<BLOCKQUOTE>
+<B>tp%</B><I>ts</I>:  <I>dp</I><B>%</B><I>ds</I>
+<TABLE cellpadding=3><!-- tsb: <B>tp%</B><I>ts</I>:  <I>dp</I><B>%</B><I>ds</I>
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD colspan=2>
+<I>target_suffix</I> <B>:</B> <I>dependency_1_suffix</I> ... <PRE>
+&lt;tab&gt; dependency_command
+...
+</PRE>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+XXXXX
+XXXXX falsch !!!
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Suffix Rules</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+Suffix rules are the POSIX way of spefifying implicit dependencies.
+<P>
+A Suffix rule looks this way:
+<P>
+<!-- ignored unsupported tag .ne -->
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD colspan=2>
+<I>DsTs</I><B>:</B> <PRE>
+&lt;tab&gt; dependency_command
+...
+</PRE>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+XXXXX falsch !!!
+</BLOCKQUOTE>
+<A name=>
+
+    <H4>&nbsp; &nbsp; Simple Suffix Rules</H4>
+</A>
+<BLOCKQUOTE>
+<P>
+Simple suffix rules are specific to
+<B>smake.</B> <P>
+A simple suffix rule looks this way:
+<P>
+<!-- ignored unsupported tag .ne -->
+<BLOCKQUOTE>
+<TABLE cellpadding=3>
+<TR valign=top><TD colspan=2>
+<I>target_suffix</I> <B>:</B> <I>dependency_1_suffix</I> ... <PRE>
+&lt;tab&gt; dependency_1_command
+...
+</PRE>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<P>
+The first line may not start with a TAB character.
+It starts with the target suffix or "" if no target suffix exists.
+The target suffix is followed by the target separator (&#146;:&#146;) and
+one or more dependency suffixes which are also written as "" if
+no dependency suffix exists.
+The first line is followed by exactly the same number of Bourne
+shell command lines (each starting with a TAB) as there were dependency
+suffix specification in the first line.
+Each of the Bourne shell command lines correspond to one of the
+<I>dependency suffixes</I> in the same order.
+<P>
+When
+<B>smake</B> looks for a possible source for a target with a specific suffix,
+the dependency suffixes are tried out in the order they appear in the
+first line of the suffix rule. If a source is found, the corresponding
+command line is executed.
+<P>
+There may only one simple suffix rule per target suffix.
+All suffixes except the empty suffix ("") must start with a dot (&#146;.&#146;).
+<P>
+The following example shows how a simple suffix rule
+for creating a zero suffix executable from a .o file may look:
+<P>
+<!-- ignored unsupported tag .ne -->
+<PRE>
+<B></B> 
+"": .o
+<B>$(CC) -o $@ $&lt;</B> 
+</PRE>
+<P>
+A simple suffix rule that describes how to create a
+<B>.o</B> file from the possible
+<B>.c</B> and <B>.s</B> sources may look this way:
+<P>
+<!-- ignored unsupported tag .ne -->
+<PRE>
+<B>.o: .c .s</B> 
+<B>$(CC) -c $&lt;</B> 
+<B>$(AS) -o $*.o $&lt;</B> 
+</PRE>
+<P>
+If
+<B>smake</B> is going to update
+<B>foo.c</B> using simple suffix rules, it will first look for a file
+<B>foo.c</B> and then for a file
+<B>foo.s</B>. If the file
+<B>foo.c</B> can be found the first command line
+(<B>$(CC) -c $&lt;</B>) is executed, if the file
+<B>foo.s</B> can be found the second command line
+(<B>$(AS) -o $*.o $&lt;</B>) is executed. Which command is executed depends on which
+source file exists.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>DEFAULT RULES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+Changing the implicit rules allows to change the default behaviour
+of
+<B>smake</B>. <P>
+The current default implicit rules are using the simple suffix rule
+notation:
+<P>
+<PRE>
+<B>FC=</B><I>f77</I> 
+<B>RC=</B><I>f77</I> 
+<B>PC=</B><I>pc</I> 
+<B>AS=</B><I>as</I> 
+<B>CC=</B><I>cc</I> 
+<B>LEX=</B><I>lex</I> 
+<B>YACCR=</B><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yacc -r</I> 
+<B>YACC=</B><I>yacc</I> 
+<B>ROFF=</B><I>nroff</I> 
+<B>RFLAGS=</B><I>-ms</I> 
+<B>.o: &nbsp;&nbsp;&nbsp;&nbsp;.c .s .l</B> 
+<B></B> 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(CC) -c $(CFLAGS) $0
+<B></B> 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(AS) -o $*.o $0
+<B></B> 
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(LEX) $(LFLAGS) $0;$(CC) -c $(CFLAGS) lex.yy.c;rm lex.yy.c;mv lex.yy.o $@
+<B>.c: .y</B> 
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(YACC) $(YFLAGS) $0;mv y.tab.c $@
+<B></B> 
+"":  .o .sc
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(CC) -o $* $0
+<B></B> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$(ROFF) $(RFLAGS) $0 &gt; $@
+</PRE>
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>COMMAND EXECUTION</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+All commands are executed by the standard shell
+(<B>/bin/sh</B>). They may use all constructs that
+are permitted for a POSIX shell as long as the local shell supports them.
+<P>
+</BLOCKQUOTE>
+<A name=5>
+
+     <H3>ENVIRONMENT</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+</BLOCKQUOTE>
+<A name=6>
+
+     <H3>FILES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+<TABLE cellpadding=3>
+<TR valign=top><TD colspan=2>
+<B>SMakefile</B> <!-- Consumed .TP -->
+<BR>
+<B>Makefile</B> <!-- Consumed .TP -->
+<BR>
+<B>makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+<B>Smake</B> first looks for
+<B>SMakefile</B> then for
+<B>Makefile</B> and then for
+<B>makefile</B> in the current directory to find a list of rules to be used to resolve
+the targets.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>defaults.smk</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+If
+<B>smake</B> finds this file in the current directory, then the implicit rules
+are read in from this file.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>/opt/schily/lib/defaults.smk</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+If the file
+<B>defaults.smk</B> could not be found, then
+<B>smake</B> tries to read the implicit rules from this file.
+If this file cannot be found too, then
+<B>smake uses the rules compiled into</B> <B>smake</B>. <P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>SEE ALSO</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>sh</B>(1),
+<B>makefiles</B>(4),
+<B>makerules</B>(4)
+<P>
+</BLOCKQUOTE>
+<A name=7>
+
+     <H3>NOTES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The old
+<B>schily (SING)</B> makefile system (until late 1999) did only define simple suffix rules.
+The current version of
+<B>smake</B> added support for pattern matching rules and POSIX suffix rules.
+These rules are considered to be rated with higher preference than
+simple suffix rules.
+If build in suffix rules can be found, current
+<B>smake</B> versions will not work correctly with old makefile systems.
+To use current
+<B>smake</B> versions with old makefile systems, call
+<B>smake</B> with the
+<B>-r</B> flag to disable build in POSIX suffix rules.
+Newer makefile system version include pattern matching rules that will be
+searched before the POSIX suffix rules.
+<P>
+A new shell is run for each command line. If you want to run
+more complicated shell scripts, you need to escape the end of line
+with a backslash to keep all commands on one virtual shell command line.
+<P>
+<B>Smake</B> will in the near future be as
+<B>POSIX</B> compliant as possible.
+<P>
+<B>POSIX</B> does not cover everything that is needed to write portable makefiles
+suitable to compile large portable projects.
+Even simple things like
+<B>macro+=</B><I>value</I> are not covered by
+<B>POSIX</B>. Note that adding something to a macro definition is supported by all
+known
+<I>make</I> implementation since ~ 1980.
+In addition,
+it is most unlikely
+that different
+<B>make</B> implementations although
+<B>POSIX</B> compliant, are as compatible enough to maintain large projects.
+For these reasons, it seems to be better to have a portable
+<B>make</B> implementation like
+<B>smake</B>. <P>
+</BLOCKQUOTE>
+<A name=8>
+
+     <H3>BUGS</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+Pattern matching rules, POSIX suffix rules and the .DEFAULT target
+have recently been implemented. There may be bugs in the code.
+<B>SCCS</B> retrieval is not yet implemented.
+<P>
+Built in library handling is not implemented.
+<P>
+There are currently no other known bugs, but as
+<B>smake</B> since 1994 has mainly been used with the
+the SCHILY (Sing) makefile system, there may be bugs with
+other makefiles.
+<P>
+In any case,
+<B>smake</B> is the best choice when compiling projects that are using
+the SCHILY (Sing) makefile system.
+<P>
+</BLOCKQUOTE>
+<A name=9>
+
+     <H3>AUTHOR</H3>
+
+</A>
+<BLOCKQUOTE>
+<PRE>
+J..org Schilling
+Seestr. 110
+D-13353 Berlin
+Germany
+</PRE>
+<P>
+Mail bugs and suggestions to:
+<P>
+<B></B> <A HREF="mailto:joerg@schily.isdn.cs.tu-berlin.de">joerg@schily.isdn.cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:js@cs.tu-berlin.de">js@cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:schilling@fokus.gmd.de">schilling@fokus.gmd.de</A>
+</BLOCKQUOTE>
+<P><HR>
+<TABLE width=100%><TR> <TD width=33%><I>J..org Schilling</I></TD> <TD width=33% align=center>SMAKE (1)</TD> <TD align=right width=33%><I>19. February 1997</I></TD> </TR></TABLE><FONT SIZE=-1>Generated by <A HREF="http://www.squarebox.co.uk/download/manServer.shtml">manServer 1.07</A> from e:\usr\local\smake\man\man1\smake.1 using man macros.</FONT>
+</BODY></HTML>

@@ -1,0 +1,1067 @@
+<HTML><HEAD>
+<TITLE>e:\usr\local\smake\man\man5\makerules.5</TITLE>
+<BODY bgcolor=#F0F0F0 text=#000000 link=#0000ff vlink=#C000C0 alink=#ff0000><A NAME=top></A>
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<CENTER>
+<H1><HR><I>Manual Reference Pages &nbsp;-&nbsp;</I><NOBR>makerules (4L)</NOBR><HR></H1>
+</CENTER>
+<A name=0>
+
+     <H3>NAME</H3>
+
+</A>
+<BLOCKQUOTE>
+makerules - system programmers guide for compiling projects on different platforms
+</BLOCKQUOTE>
+<A name=contents></A><H3>CONTENTS</H3></A>
+<BLOCKQUOTE>
+<A HREF=#1>Synopsis</A><BR>
+<A HREF=#2>Description</A><BR>
+<A HREF=#3>Files</A><BR>
+<A HREF=#4>Diagnostics</A><BR>
+<A HREF=#5>Notes</A><BR>
+<A HREF=#6>Bugs</A><BR>
+<A HREF=#7>Author</A><BR>
+</BLOCKQUOTE>
+<A name=8>
+
+     <H3>SYNOPSIS</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>SRCROOT= ..</B> <!-- Need break --><BR>
+<B>RULESDIR= RULES</B> <!-- Need break --><BR>
+<B>include $(SRCROOT)/$(RULESDIR)/rules.top</B> <!-- Need break --><BR>
+<I>local defines are here</I> <!-- Need break --><BR>
+<B>include $(SRCROOT)/$(RULESDIR)/rules.*</B> <P>
+See chapter CURRENTLY SUPPORTED TARGET TYPES for possible values of
+<B>rules.*</B>. <P>
+</BLOCKQUOTE>
+<A name=2>
+
+     <H3>DESCRIPTION</H3>
+
+</A>
+<BLOCKQUOTE>
+Makerules is a set of rules that allows compiling of structured
+projects with small and uniformly structured makefiles.
+All rules are located in a central directory.
+Compiling the projects on different platforms can be done
+simultaneously without
+the need to modify any of the makefiles that are located
+in the projects directories.
+<P>
+Makerules is a set of high level portability tools superior to
+<B>autoconf</B> and easier to use.
+<P>
+Three make programs are currently supported:
+<I>Sunpro make</I>, <I>GNU make</I> and
+<I>smake</I>. If you want to add support for other make programs, read the
+sections about the minimum requirements for a make program
+and about the structure of the
+<B>make rule</B> system.
+<P>
+This manual will help programmers who need to make modifications
+on the make rule system itself. If you want to know something
+on how to use the
+<B>makefile system</B> have a look at
+<B>makefiles</B>(4).
+<P>
+The main design goal was to have no definition on more than place
+in the make rules. This implies that system programmers who
+want to add or modify rules must follow this goal in order not to
+destroy functionality in other places.
+<P>
+The visible result for the user is a set of small and easy to read
+makefiles, each located in the project&#146;s leaf directory and therefore
+called
+<I>leaf</I>-makefile. <P>
+Each of these
+<I>leaf</I>-makefiles, in fact contains no rule at all. It simply defines some macros
+for the
+<I>make</I>-program and includes two files from a central make rule depository.
+These included files define the rules that are needed to compile
+the project.
+<P>
+Each
+<I>leaf</I>-makefile is formed in a really simple way:
+<TABLE cellpadding=3><!-- tsb: Each
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+It first defines two macros that define the relative location
+of the project&#146;s root directory and the name of the directory
+that contains the complete set of of rules and then includes
+the rule file
+<I>rules.top</I> from the directory that forms the central rule depository.
+You only have to edit the macro
+<I>SRCROOT</I> to reflect the relative location of the project&#146;s root directory.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+The next part of a
+<I>leaf</I>-makefile defines macros that describe the target and the source.
+You can only have one target per
+<I>leaf</I>-makefile. Of course, there may be many source files, that are needed to create
+that target.
+If you want to make more than one target in a specific directory,
+you have to put more than one makefile into that directory.
+This is the part of a makefile that describes a unique target.
+Edit this part to contain all source files, all local include files
+and all non global compile time flags that are needed for your target.
+For a typical target this is as simple as filling in a form.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+Each
+<I>leaf</I>-makefile finally includes a file from the rules directory that contains
+rules for the appropriate type of target that is to be made
+from this
+<I>leaf</I>-makefile. </TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>The makefile in each directory has to be called
+<I>Makefile</I>. If you want to have more than one makefile in a specific directory,
+you have to choose different names for the other makefiles.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>Currently Supported Target Types</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+There are rules for the following type of targets:
+<TABLE cellpadding=3><!-- tsb: There are rules for the following type of targets:
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=20% nowrap>
+commands
+</TD><TD valign=bottom>
+The make rules for user level commands like
+<I>cat</I>, <I>ls</I> etc. are located in the file
+<I>rules.cmd</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+drivers
+</TD><TD valign=bottom>
+The make rules for device drivers
+are located in the file
+<I>rules.drv</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+libraries
+</TD><TD valign=bottom>
+The make rules for non shared libraries
+are located in the file
+<I>rules.lib</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+shared libraries
+</TD><TD valign=bottom>
+The make rules for shared libraries
+are located in the file
+<I>rules.shl</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+localized files
+</TD><TD valign=bottom>
+The make rules for localized files
+are located in the file
+<I>rules.loc</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+nonlocalized files
+</TD><TD valign=bottom>
+The make rules for non localized files
+are located in the file
+<I>rules.aux</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+shell scripts
+</TD><TD valign=bottom>
+The make rules for shell scripts (a variant of localized files)
+are located in the file
+<I>rules.scr</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+manual pages
+</TD><TD valign=bottom>
+The make rules for manual pages (a variant of localized files)
+are located in the file
+<I>rules.man</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+diverted makefiles
+</TD><TD valign=bottom>
+The make rules for projects that need to have more than
+one makefile in a specific directory
+are located in the file
+<I>rules.mks</I> It contains a rule that diverts to the listed sub makefiles.
+Each sub makefile may be of any type.
+</TD></TR>
+<TR valign=top><TD width=20% nowrap>
+directories
+</TD><TD valign=bottom>
+The make rules for sub directories
+are located in the file
+<I>rules.dir</I> <P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Minimum Requirements For A Make Program</H3>
+
+</A>
+<BLOCKQUOTE>
+The make rules currently have support for
+<I>Sunpro make</I>, <I>GNU make</I> and
+<I>smake</I>. If you like to add support for other make programs,
+they need to have some minimal features that go
+beyond the capabilities of the standard
+<FONT size=-1>UNIX</FONT> <B>make</B> program.
+<I>BSDmake</I> could be supported if it supports pattern matching rules correctly.
+<TABLE cellpadding=3><!-- tsb: The make rules currently have support for
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=20% nowrap>
+include
+</TD><TD valign=bottom>
+The make program must be able to recursively include other files
+from within a
+<I>makefile.</I> The name if the file to include must be allowed to be a macro.
+The make program must be able to do this in a way that
+if the file that should be included may be a result of make rule.
+e.g if the file to be included does not exist or is outdated,
+it should be built before an attempt is made to actually include it.
+</TD></TR>
+<TR valign=top><TD width=20% nowrap>
+appending to a macro
+</TD><TD valign=bottom>
+A macro reference of the form:
+<P>
+<B>macro += addval</B> <P>
+should append
+<B>addval</B> to the string that is currently in
+<B>macro</B>. </TD></TR>
+<TR valign=top><TD colspan=2>
+suffix macro replacement
+</TD></TR><TR valign=top><TD width=20%>&nbsp;</TD><TD>
+A macro reference of the form:
+<P>
+<B>out= $(macro:string1=string2)</B> <P>
+should replace a suffix
+<I>string1</I> to
+<I>string2</I> in all words that are in
+<B>macro</B>, where string1 is either a suffix, or a word to be replaced
+in the macro definition, and string2 is the replacement
+suffix or word.
+<I>String1</I> and
+<I>string2</I> must be replaced correctly even if they are macros themselves.
+Words in a macro value are separated by SPACE,
+TAB, and escaped NEWLINE characters.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+pattern macro replacement
+</TD></TR><TR valign=top><TD width=20%>&nbsp;</TD><TD>
+A macro reference of the form:
+<P>
+<B>out= $(macro:op%os=np%ns)</B> <P>
+should replace a central pattern in
+<B>macro</B>, where
+<B>op</B> is the existing (old) prefix and
+<B>os</B> is the existing
+(old) suffix,
+<B>np</B> and
+<B>ns</B> are the new prefix and new suffix,
+respectively, and the pattern matched by % (a string of zero
+or more characters), is carried forward from the value being
+replaced.
+For example:
+<P>
+<B>PROGRAM=fabricate</B> <!-- Need break --><BR>
+<B>DEBUG= $(PROGRAM:%=tmp/%-g)</B> <P>
+sets the value of DEBUG to tmp/fabricate-g.
+<I>Op</I>, <I>os</I>,  <I>np</I> and <I>ns</I> must be replaced correctly even if they are macros themselves.
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Understanding Basic Algorithms</H3>
+
+</A>
+<BLOCKQUOTE>
+One of the basic algorithms used in the make rule system
+is needed to set an undefined macro to a guaranteed default value.
+Because not all make programs have support for
+<I>if then else</I> structures, a different method has to be used.
+<P>
+The method used in
+<B>make rules</B> is implemented by using
+<B>suffix macro replacement</B> and
+<B>pattern macro replacement</B>. <P>
+<!-- ignored unsupported tag .ne -->
+First, a macro that contains a unique suffix is defined:
+<P>
+<B> # Define magic unique cookie</B> <!-- Need break --><BR>
+<B> _UNIQ= .XxZzy-</B> <P>
+This macro is used for all places where it is necessary to have
+a macro with a guaranteed default value.
+The following example shows the basic algorithm that is used to
+implement the phrase:
+<B>If</B> <I>$(MAKE_NAME)</I> contains a value,
+<B>then</B> <I>$(XMAKEPROG)</I> will be set to
+<I>$(MAKE_NAME)</I> <B>else</B> <I>$(XMAKEPROG)</I> will be set to
+<I>$(MAKEPROG)</I>. <P>
+<B> _MAKEPROG= $(_UNIQ)$(MAKE_NAME)</B> <!-- Need break --><BR>
+<B> __MAKEPROG= $(_MAKEPROG:$(_UNIQ)=$(MAKEPROG))</B> <!-- Need break --><BR>
+<B> XMAKEPROG= $(__MAKEPROG:$(_UNIQ)%=%)</B> <P>
+The first line in this example, sets the macro
+<I>_MAKEPROG</I> to the concatenation of the value of
+<I>MAKE_NAME</I> and
+<B>.XxZzy-</B>. If the macro
+<I>MAKE_NAME</I> is empty at this time,
+<I>_MAKEPROG</I> will contain only
+<B>.XxZzy-</B>. <P>
+In the second line,
+<I>__MAKEPROG</I> is set to the value of
+<I>_MAKEPROG</I>. If
+<I>_MAKEPROG</I> contains only
+<B>.XxZzy-</B> this implies, that
+<B>.XxZzy-</B> is the suffix. This suffix is then replaced
+by the value of
+<I>MAKEPROG</I>, in this case
+<I>__MAKEPROG</I> will contain the unmodified value of
+<I>MAKEPROG</I>. If
+<I>_MAKEPROG</I> contains a concatenation of
+<B>.XxZzy-</B> and something else,
+<B>.XxZzy-</B> will not be a suffix, but a prefix of
+<I>_MAKEPROG</I> and for this reason
+<I>__MAKEPROG</I> will contain the unmodified value of
+<I>_MAKEPROG</I>, which is a concatenation of
+<B>.XxZzy-</B> and the value of
+<I>MAKE_NAME</I>. <P>
+In the third line,
+<I>XMAKEPROG</I> is set to the value of
+<I>__MAKEPROG</I>. If
+<I>__MAKEPROG</I> has the prefix
+<B>.XxZzy-</B> at this time,
+<B>.XxZzy-</B> is stripped of.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>The Structure in Make Macro names</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The names used for
+<B>make macros</B> are structured in a way that allows to use
+<B>grep</B>(1)
+to look for the names in the
+<B>make rules.</B> To allow this, no name must be a substring of another name.
+<P>
+If a command needs options that have to be specified
+in macros, there is a
+<B>make macro</B> that is named
+<I>XXXFLAGS.</I> This is compliant to usual make file rules.
+The are internal
+<B>make macros</B> called
+<I>XXXOPTS</I> and
+<I>XXXOPTX</I> that will be combined for
+<I>XXXFLAGS</I>: <P>
+<B>LDFLAGS= $(LDOPTS) $(LDOPTX)</B> <P>
+Where
+<I>XXXOPTS</I> is the name of the macro that is used internally
+and
+<I>XXXOPTX</I> is the name of the macro that may be used from the
+command line of the make program.
+<I>XXXOPTX</I> therefore is used to append to the content of
+<I>XXXFLAGS</I> If the value of
+<I>XXXFLAGS</I> need to be overwritten,
+<I>XXXOPTS</I> may be used within the command line flags of the make program.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>The Structure Of The Make Rule System</H3>
+
+</A>
+<BLOCKQUOTE>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>The Structure Of The Basic Rules in rules.top</H3>
+
+</A>
+<BLOCKQUOTE>
+The file
+<B>RULES/rules.top</B> first includes a rule file that depends on the
+make program that is used.
+The name of this file is
+<B>RULES/mk-</B><I>makeprog</I><B>.id</B> where
+<I>makeprog</I> has to be replaced by the real name of
+the makeprogram e.g.
+<B>make</B>, <B>gmake</B>, <B>smake</B>. The purpose of this file is to set up a list of macros
+that identify the system where the project is currently built.
+These macros have values that contain only lower case letters and define:
+<TABLE cellpadding=3><!-- tsb: The file
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=28% nowrap>
+the processor architecture
+</TD><TD valign=bottom>
+If two systems run the same operating system, this
+is a unique value if a simple user level program will
+not need to be recompiled in order to run on the other system.
+Possible values are
+<B>sparc</B>, <B>mc68020</B>, <B>pentium</B>. This is the output of
+<B>uname -p</B>. The value is stored in
+<B>P_ARCH</B>. </TD></TR>
+<TR valign=top><TD width=28% nowrap>
+the kernel architecture
+</TD><TD valign=bottom>
+If two systems may use the same value for
+<B>P_ARCH</B> but a heavily system dependent user level program
+need to be recompiled in order to run on the other
+system, These two systems have different
+kernel architectures.
+This is the output of
+<B>uname -m</B>. Possible values are
+<B>sun3</B>, <B>sun4c</B>, <B>sun4m</B>. The value is stored in
+<B>K_ARCH</B>. </TD></TR>
+<TR valign=top><TD width=28% nowrap>
+the machine architecture
+</TD><TD valign=bottom>
+An outdated macro that is useful only on sun systems.
+Do not use this, use
+<B>P_ARCH</B> instead.
+This is the output of
+<B>arch</B>. Possible values are
+<B>sun3</B>, <B>sun4</B>. The value is stored in
+<B>M_ARCH</B>. </TD></TR>
+<TR valign=top><TD width=28% nowrap>
+the hostname
+</TD><TD valign=bottom>
+The name of the machine where the compilation takes place.
+This is the output of
+<B>uname -n</B>. The value is stored in
+<B>HOSTNAME</B>. </TD></TR>
+<TR valign=top><TD colspan=2>
+the name of the operating system
+</TD></TR><TR valign=top><TD width=28%>&nbsp;</TD><TD>
+This is the output of
+<B>uname -s</B>. Possible values are
+<B>sunos</B>, <B>dgux</B>, <B>hp-ux</B>, <B>irix</B>. The value is stored in
+<B>OSNAME</B>. </TD></TR>
+<TR valign=top><TD colspan=2>
+the release of the operating system
+</TD></TR><TR valign=top><TD width=28%>&nbsp;</TD><TD>
+This is the output of
+<B>uname -r</B>. Possible values are
+<B>5.5</B>, <B>4.1.4</B>. The value is stored in
+<B>OSREL</B>. </TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>The next file to be included from
+<B>RULES/rules.top</B> is
+<B>RULES/os-</B><I>operating system</I><B>.id</B><I>.</I> It defines the macros
+<B>O_ARCH</B> and
+<B>-O_ARCH</B> and may modify one of the macros that are defined
+in
+<B>RULES/mk-</B><I>makeprog</I><B>.id</B><I>.</I> The macros
+<B>O_ARCH</B> and
+<B>-O_ARCH</B> are used to distinguish between different operating systems.
+The names of the compiler configuration files have
+<B>-O_ARCH</B> as a central part.
+On some operating systems e.g.
+<B>SunOS</B> and
+<B>DG-UX</B> it is necessary to distinguish between
+<B>SunOS 4.x</B> and
+<B>SunOS 5.x</B> or
+<B>DG-UX 3.x</B> and
+<B>DG-UX 4.x.</B> <P>
+The next file to be included from
+<B>RULES/rules.top</B> is
+<B>Defaults</B>. It defines the macros
+<B>DEFCCOM</B> ,
+<B>DEFINCDIRS</B> ,
+<B>LDPATH</B> ,
+<B>RUNPATH</B> ,
+<B>INS_BASE</B> and
+<B>INS_KBASE</B>. If the definitions have to be different on
+different systems, this file may contain a line int the form:
+<P>
+<B>include</B><I> $(SRCROOT)</I><B>/Defaults.</B><I>$(O_ARCH)</I> <P>
+The actual definitions then have to be moved into
+these files.
+<P>
+Next, after setting up some internal defaults,
+<B>RULES/rules.top</B> includes the compiler configuration file with
+the name:
+<P>
+<I>$(SRCROOT)/$(RULESDIR)/$(XARCH).rul</I> <P>
+This file contains all necessary
+<B>system dependent</B> stuff that is needed to configure the C-compiler
+on the appropriate system.
+It is a bad idea to create a new one from scratch.
+Have a look at the other compiler configuration
+files and modify a similar file for your needs.
+Note that there are basically two criterias to
+that are important in a compiler configuration file.
+One is whether the system uses the
+<I>ELF</I> header format or not.
+The other is whether the system uses
+<I>shared libraries</I> or not.
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>The Structure Of The Application Specific Rules</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The application specific rule files are designed in
+such a way that they include all necessary stuff that
+is needed for that specific task. The application specific
+rule files are:
+<TABLE cellpadding=3><!-- tsb: The application specific rule files are designed in
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.aux
+</TD><TD valign=bottom>
+Rules for installing non localized auxiliary files.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.cmd
+</TD><TD valign=bottom>
+Rules for commands like
+<I>sh.</I> </TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.dir
+</TD><TD valign=bottom>
+Rules for sub directories.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.drv
+</TD><TD valign=bottom>
+Rules for lodable drivers.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.lib
+</TD><TD valign=bottom>
+Rules for static libraries.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.loc
+</TD><TD valign=bottom>
+Rules for installing localized auxiliary files.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.man
+</TD><TD valign=bottom>
+Rules for installing localized manual pages.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.mks
+</TD><TD valign=bottom>
+Rules for sub makefiles.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.mod
+</TD><TD valign=bottom>
+Rules for lodable stream modules.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.scr
+</TD><TD valign=bottom>
+Rules for installing localized shell scripts.
+</TD></TR>
+<TR valign=top><TD width=25% nowrap>
+$(RULES)/rules.shl
+</TD><TD valign=bottom>
+Rules for shared libraries.
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Understanding The Structure Of The Make Rule System</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+To understand the structure of the
+<B>make rule</B> system while doing changes, try to use the
+<B>-xM</B> flag
+in the
+<B>smake</B> program.
+This flag will print out the include dependency list
+(i.e. a list that tell you which make rules is included
+from which other rule).
+<P>
+Note that some of the rules are make program dependent.
+If you want to make changes to these rules you may need to
+place the definitions into separate rule files
+each for the appropriate make program.
+Have a look into the
+<B>RULES</B> directory
+for some examples.
+<P>
+</BLOCKQUOTE>
+<A name=3>
+
+     <H3>FILES</H3>
+
+</A>
+<BLOCKQUOTE>
+&#46;../RULES/*
+<!-- Need break --><BR>
+&#46;../DEFAULTS/*
+<!-- Need break --><BR>
+&#46;../TARGETS/*
+<!-- Need break --><BR>
+&#46;../TEMPLATES/*
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>SEE ALSO</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>makefiles</B>(4),
+<B>make</B>(1),
+<B>gmake</B>(1),
+<B>smake</B>(1).
+<P>
+</BLOCKQUOTE>
+<A name=4>
+
+     <H3>DIAGNOSTICS</H3>
+
+</A>
+<BLOCKQUOTE>
+Diagnostic messages depend on the make program.
+Have a look at the appropriate man page.
+<P>
+</BLOCKQUOTE>
+<A name=5>
+
+     <H3>NOTES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The make rules
+can be used with
+<I>Sunpro make</I>, <I>Gnu make</I> and
+<I>smake</I>. Although Gnu make runs on many platforms, it has no useful debug
+output.
+<P>
+Use
+<I>Sunpro make</I> or <I>smake</I> if you have problems with a makefile.
+<I>Sunpro make</I> and <I>smake</I>, both have a -D flag, that allows you to watch the makefiles
+after the first expansion. Use this option, if you are in doubt
+if your makefile gets expanded the right way and if the right
+rules are included.
+There is also a -d option that gives debugging output while
+make is running. If you want more output, use -dd, -ddd and so on.
+<P>
+<I>Smake</I> has an option -xM that shows you the include dependency for
+make rules.
+<P>
+</BLOCKQUOTE>
+<A name=6>
+
+     <H3>BUGS</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>Source Tree Hierarchy</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The following outline gives a quick tour through a typical
+source hierarchy:
+<P>
+<!-- ignored unsupported tag .na -->
+<!-- ignored unsupported tag .nh -->
+<TABLE cellpadding=0 cellspacing=0>
+<TR valign=top><TD width=6% nowrap>
+<B>.../</B> </TD><TD valign=bottom>
+root directory of the source tree
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the top Makefile
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Defaults</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+default definitions for that source tree. System dependent
+definitions are in
+<B>.../DEFAULTS/</B> </TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories that are needed
+for that project.
+If the system needs different target lists depending
+on the target system architecture , use target specific files in
+<B>.../TARGETS/</B> </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../RULES/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the location of makefiles (included rules)
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>rules.top</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the mandatory include rules (needed to setup basic rules)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.aux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a non localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.cmd</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make an ordinary command (like /bin/sh)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.drv</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a device driver
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.lib</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a standard (nonshared) library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.loc</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized manual page
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.scr</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized shell script
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.shl</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a shared library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.mks</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make more than one target in a specific directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.dir</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make targets that are located in sub directories
+to the current directory
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../DEFAULTS/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+default definitions for various target architectures are
+located in this directory. Templates for some architectures can
+be found in the
+<I>.../TEMPLATES/</I> directory.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../TARGETS/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+target list definitions for various target architectures are
+located in this directory.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../TEMPLATES/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+templates that should be used inside the project
+(rename to Makefile, if it is the only makefile on that directory,
+rename to
+<I>target.mk,</I> if there is more than one target in that directory)
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Defaults</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Defaults file for the source root directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Defaults.linux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Defaults file for
+<I>linux</I>. This sould be installed in the
+<B>.../DEFAULTS/</B> directory.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.root</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for the source root directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.aux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a non localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.cmd</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for an ordinary command (like /bin/sh)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.lib</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a standard (nonshared) library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.loc</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized manual page
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile_de.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized manual page in the german locale
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.scr</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized shell script
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.shl</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a shared library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.drv</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a device driver
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.mks</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for more than one target in a specific directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.dir</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for targets that are located in sub directories
+to the current directory
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../cmd/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+source tree for normal commands
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>cmd</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>myprog</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>myprog/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where the sources for a specific command are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+Makefile
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+makefile for
+<I>myprog</I> </TD></TR>
+<TR valign=top><TD colspan=2>
+Makefile.man
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+makefile for the manual page of
+<I>myprog</I> </TD></TR>
+<TR valign=top><TD colspan=2>
+mprog.c
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+source for myprog
+</TD></TR>
+<TR valign=top><TD colspan=2>
+mprog.tr
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+troff source for the manual page of myprog
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>OBJ/</B> </TD><TD valign=bottom>
+directory where system specific sub directories are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binaries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE><!-- ignored unsupported tag .ne -->
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../lib/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where the sources for a libraries are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>lib</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>libfoo</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>libfoo/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where all source files for libfoo are located
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../kernel</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for kernel modules
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>kernel</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>drv</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>drv/</B> </TD><TD valign=bottom>
+directory where drivers are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>drv</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>mydrv</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>mydrv/</B> </TD><TD valign=bottom>
+source for a specific driver
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../include</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for global include files that are used in that project
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../bins</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binary programs that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binaries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../libs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for libraries that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for libraries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../incs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for include files that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for include files that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></BLOCKQUOTE>
+<!-- ignored unsupported tag .ad -->
+<P>
+<A name=7>
+
+     <H3>AUTHOR</H3>
+
+</A>
+<BLOCKQUOTE>
+<PRE>
+J..org Schilling
+Seestr. 110
+D-13353 Berlin
+Germany
+</PRE>
+<P>
+Mail bugs and suggestions to:
+<P>
+<B></B> <A HREF="mailto:joerg@schily.isdn.cs.tu-berlin.de">joerg@schily.isdn.cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:js@cs.tu-berlin.de">js@cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:jes@fokus.gmd.de">jes@fokus.gmd.de</A>
+</BLOCKQUOTE>
+<P><HR>
+<TABLE width=100%><TR> <TD width=33%><I>J..org Schilling</I></TD> <TD width=33% align=center>makerules (4L)</TD> <TD align=right width=33%><I>14. February 1997</I></TD> </TR></TABLE><FONT SIZE=-1>Generated by <A HREF="http://www.squarebox.co.uk/download/manServer.shtml">manServer 1.07</A> from e:\usr\local\smake\man\man5\makerules.5 using man macros.</FONT>
+</BODY></HTML>

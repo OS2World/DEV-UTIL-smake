@@ -1,0 +1,1880 @@
+<HTML><HEAD>
+<TITLE>e:\usr\local\smake\man\man5\makefiles.5</TITLE>
+<BODY bgcolor=#F0F0F0 text=#000000 link=#0000ff vlink=#C000C0 alink=#ff0000><A NAME=top></A>
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<!-- ignored unsupported tag .if -->
+<CENTER>
+<H1><HR><I>Manual Reference Pages &nbsp;-&nbsp;</I><NOBR>makefiles (4L)</NOBR><HR></H1>
+</CENTER>
+<A name=0>
+
+     <H3>NAME</H3>
+
+</A>
+<BLOCKQUOTE>
+makefiles - users guide for compiling projects on different platforms
+</BLOCKQUOTE>
+<A name=contents></A><H3>CONTENTS</H3></A>
+<BLOCKQUOTE>
+<A HREF=#1>Synopsis</A><BR>
+<A HREF=#2>Description</A><BR>
+<A HREF=#3>Examples</A><BR>
+<A HREF=#4>Files</A><BR>
+<A HREF=#5>Diagnostics</A><BR>
+<A HREF=#6>Notes</A><BR>
+<A HREF=#7>Bugs</A><BR>
+<A HREF=#8>Author</A><BR>
+</BLOCKQUOTE>
+<A name=9>
+
+     <H3>SYNOPSIS</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>make [target]</B> <!-- Need break --><BR>
+<B>gmake [target]</B> <!-- Need break --><BR>
+<B>smake [target]</B> <P>
+Target may be one of:
+<TABLE cellpadding=3><!-- tsb: Target may be one of:
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=10% nowrap>
+&#46;help
+</TD><TD valign=bottom>
+to get a list of possible targets and a short description.
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+all
+</TD><TD valign=bottom>
+to make the default targets
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+install
+</TD><TD valign=bottom>
+to make and install the default targets
+(see
+<I>INS_BASE</I> and <I>INS_KBASE</I> to learn how to modify the installation path).
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+ibins
+</TD><TD valign=bottom>
+to make and install a target in
+<I>SRCROOT/bins</I> </TD></TR>
+<TR valign=top><TD width=10% nowrap>
+depend
+</TD><TD valign=bottom>
+to re-make dependency rules for all default targets.
+Note: All dependency files will automatically remade
+on the next run of make before they are included.
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+clean
+</TD><TD valign=bottom>
+to remove
+<I>core</I> files and all intermediate object files.
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+clobber
+</TD><TD valign=bottom>
+to remove the targets from
+<I>clean</I>, all dependency files and all final targets
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+distclean
+</TD><TD valign=bottom>
+to remove the targets from
+<I>clean</I> and <I>clobber</I> and all made files for all architectures.
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+tags
+</TD><TD valign=bottom>
+to make
+<B>vi</B>(1)
+compatible tags
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+TAGS
+</TD><TD valign=bottom>
+to make
+<B>emacs</B>(1)
+compatible tags
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+config
+</TD><TD valign=bottom>
+reserved for future use.
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+rmtarget
+</TD><TD valign=bottom>
+to remove the default target
+</TD></TR>
+<TR valign=top><TD width=10% nowrap>
+relink
+</TD><TD valign=bottom>
+to remove the default target and remake it immediately. This can be
+used to change .e.g LD_RUN_PATH in the executable.
+<P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=2>
+
+     <H3>DESCRIPTION</H3>
+
+</A>
+<BLOCKQUOTE>
+Makefiles is a set of rules that allows compiling of structured
+projects with small and uniformly structured makefiles.
+All rules are located in a central directory.
+Compiling the projects on different platforms can be done
+simultaneously without
+the need to modify any of the makefiles that are located
+in the projects directories.
+<P>
+Makefiles is a set of high level portability tools superior to
+<B>autoconf</B> and easier to use.
+<P>
+Three make programs are supported:
+<I>Sunpro make</I>, <I>GNU make</I> and
+<I>smake</I>. <P>
+<I>BSDmake</I> could be supported if it supports pattern matching rules correctly.
+<P>
+The main design goal was to have a set of small and easy to read
+makefiles, each located in the project&#146;s leaf directory and therefore
+called
+<I>leaf</I>-makefile. <P>
+Each of these
+<I>leaf</I>-makefiles, in fact contains no rule at all. It simply defines some macros
+for the
+<I>make</I>-program and includes two files from a central make rule depository.
+The included files and the files that are recursively included
+define the rules that are needed to compile the project.
+<P>
+Each
+<I>leaf</I>-makefile is formed in a really simple way:
+<TABLE cellpadding=3><!-- tsb: Each
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+It first defines two macros that define the relative location
+of the project&#146;s root directory and the name of the directory
+that contains the complete set of of rules and then includes
+the rule file
+<I>rules.top</I> from the directory that forms the central rule depository.
+You only have to edit the macro
+<I>SRCROOT</I> to reflect the relative location of the project&#146;s root directory.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+The next part of a
+<I>leaf</I>-makefile defines macros that describe the target and the source.
+You can only have one target per
+<I>leaf</I>-makefile. Of course, there may be many source files, that are needed to create
+that target.
+If you want to make more than one target in a specific directory,
+you have to put more than one makefile into that directory.
+This is the part of a makefile that describes a unique target.
+Edit this part to contain all source files, all local include files
+and all non global compile time flags that are needed for your target.
+For a typical target this is as simple as filling in a form.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+o
+</TD><TD valign=bottom>
+Each
+<I>leaf</I>-makefile finally includes a file from the rules directory that contains
+rules for the appropriate type of target that is to be made
+from this
+<I>leaf</I>-makefile. </TD></TR>
+<!-- PP ends table -->
+<TR></TR></TABLE>The makefile in each directory has to be called
+<I>Makefile</I>. If you want to have more than one makefile in a specific directory,
+you have to choose different names for the other makefiles.
+<P>
+There are rules for the following type of targets:
+<TABLE cellpadding=3><!-- tsb: There are rules for the following type of targets:
+ -->
+<TR></TR><TR></TR>
+<TR valign=top><TD width=20% nowrap>
+commands
+</TD><TD valign=bottom>
+The make rules for user level commands like
+<I>cat</I>, <I>ls</I> etc. are located in the file
+<I>rules.cmd</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+drivers
+</TD><TD valign=bottom>
+The make rules for device drivers
+are located in the file
+<I>rules.drv</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+libraries
+</TD><TD valign=bottom>
+The make rules for non shared libraries
+are located in the file
+<I>rules.lib</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+shared libraries
+</TD><TD valign=bottom>
+The make rules for shared libraries
+are located in the file
+<I>rules.shl</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+localized files
+</TD><TD valign=bottom>
+The make rules for localized files
+are located in the file
+<I>rules.loc</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+nonlocalized files
+</TD><TD valign=bottom>
+The make rules for non localized files
+are located in the file
+<I>rules.aux</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+shell scripts
+</TD><TD valign=bottom>
+The make rules for shell scripts (a variant of localized files)
+are located in the file
+<I>rules.scr</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+manual pages
+</TD><TD valign=bottom>
+The make rules for manual pages (a variant of localized files)
+are located in the file
+<I>rules.man</I> </TD></TR>
+<TR valign=top><TD width=20% nowrap>
+diverted makefiles
+</TD><TD valign=bottom>
+The make rules for projects that need to have more than
+one makefile in a specific directory
+are located in the file
+<I>rules.mks</I> It contains a rule that diverts to the listed sub makefiles.
+Each sub makefile may be of any type.
+</TD></TR>
+<TR valign=top><TD width=20% nowrap>
+directories
+</TD><TD valign=bottom>
+The make rules for sub directories
+are located in the file
+<I>rules.dir</I> <P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>Macros/Variables Used In Rules</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The following is a description of the most important macros
+used within the make rules.
+<I>NOTE:</I> not all of them might be changed in a specific makefile.
+Carefully read the description and change only those macros
+that are intended to be used to change the behavior of
+the compilation.
+<P>
+<TABLE cellpadding=3>
+<TR valign=top><TD width=13% nowrap>
+ARCHDIR
+</TD><TD valign=bottom>
+contains the location where object files and make targets will be placed.
+A typical name would be:
+<I>OBJ/sparc-sunos5-cc</I> <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+ASFLAGS
+</TD><TD valign=bottom>
+The flags that are used with the assembler.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+ASMFILES
+</TD><TD valign=bottom>
+a list of assembler source files, to be specified in a
+leaf makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+ASOPTS
+</TD><TD valign=bottom>
+The internal macro that contains the flags for the assembler.
+Change this macro if you want to change the behavior.
+Use:
+<B>ASOPTS= value</B> If you want to override the default value. If you want to
+override the default assembler flags from the command line
+call:
+<B>make &#146;ASOPTS=value&#146;</B> Use:
+<B>ASOPTS += value</B> If you want to add flags to the default value from within a makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+ASOPTX
+</TD><TD valign=bottom>
+may be used if you want to add flags to the assembler flags from the
+command line. Use:
+<B>make &#146;ASOPTX=value&#146;</B> </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+C_ARCH
+</TD><TD valign=bottom>
+this macro contains the c-compiler architecture name.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CCOM
+</TD><TD valign=bottom>
+This macro may be used from the command line to use a different
+c-compiler than the default.
+Use:
+<B>make &#146;CCOM=gcc&#146;</B> to use
+<I>gcc</I> for the next run.
+Note: The value of
+<I>CCOM</I> must not necessarily be identical to the real name of the c-compiler.
+It refers to a filename which contains the definition for that
+c-compiler. This hint applies as well to all other macros that deal with
+the name of the c-compiler.
+The only macro, that contains the real invocation name of the c-compiler,
+is
+<I>CC</I>. <I>CC</I> is set inside the machine dependent configuration file in the central
+rules depository and must not be changed elsewhere.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CFILES
+</TD><TD valign=bottom>
+a list of C source files, to be specified in a
+leaf makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CFLAGS
+</TD><TD valign=bottom>
+The flags that are used with the c-compiler.
+Do not use flags that belong to the c-preprocessor in the
+<I>COPTOPT</I>, <I>COPTS</I> and <I>COPTX</I> macros.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CLEAN_FILES
+</TD><TD valign=bottom>
+A list of files ( besides the object files ) that will be
+removed with
+<I>make clean</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CLEAN_FILEX
+</TD><TD valign=bottom>
+this macro may be used to define additional files that should
+be removed with
+<I>make clean</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CLOBBER_FILEX
+</TD><TD valign=bottom>
+this macro may be used to define additional files that should
+be removed with
+<I>make clobber</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+COPTOPT
+</TD><TD valign=bottom>
+The c-compiler optimization flag. This flag is intended to
+be overridden either from a makefile or from command line.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+COPTS
+</TD><TD valign=bottom>
+The internal macro that contains the flags for the c-compiler.
+Change this macro if you want to change the behavior.
+Use:
+<B>COPTS= value</B> If you want to override the default value. If you want to
+override the default c-compiler flags from the command line
+call:
+<B>make &#146;COPTS=value&#146;</B> Use:
+<B>COPTS += value</B> If you want to add flags to the default value from within a makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+COPTX
+</TD><TD valign=bottom>
+may be used if you want to add flags to the c-compiler flags from the
+command line. Use:
+<B>make &#146;COPTX=value&#146;</B> </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CPPFLAGS
+</TD><TD valign=bottom>
+The flags that are used with the c-preprocessor.
+This macro as well as:
+<I>CPPOPTS</I> and <I>CPPOPTX</I> are also used when compiling c-programs.
+They should contain only the following flags:
+<I>-Dname=value </I>,<I> -Uname </I>,<I></I> <I>-Idirectory</I> and <I>-Ydirectory</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CPPOPTS
+</TD><TD valign=bottom>
+The internal macro that contains the flags for the c-preprocessor.
+Change this macro if you want to change the behavior.
+Use:
+<B>CPPOPTS= value</B> If you want to override the default value. If you want to
+override the default c-preprocessor flags from the command line
+call:
+<B>make &#146;CPPOPTS=value&#146;</B> Use:
+<B>CPPOPTS += value</B> If you want to add flags to the default value from within a makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CPPOPTX
+</TD><TD valign=bottom>
+may be used if you want to add flags to the c-preprocessor flags from the
+command line. Use:
+<B>make &#146;CPPOPTX=value&#146;</B> </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CURDIR
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory that is currently processed.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CWARNOPTS
+</TD><TD valign=bottom>
+This macro may be set in
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I> to overwrite the default c-compiler warn options.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+CWOPTS
+</TD><TD valign=bottom>
+This macro is set inside the machine dependent configuration file in the central
+rules depository and must not be changed elsewhere.
+It contains the flags that set the default warning level for the c-compiler.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFINSGRP
+</TD><TD valign=bottom>
+this macro may be set in the projects defaults file to set up the
+default group id for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFINSMODE
+</TD><TD valign=bottom>
+this macro may be set in the projects defaults file to set up the
+default file permission for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFINSUSR
+</TD><TD valign=bottom>
+this macro may be set in the projects defaults file to set up the
+default user id for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFUMASK
+</TD><TD valign=bottom>
+this macro may be set in the projects defaults file to set up the
+default
+<I>umask</I> value for creating sub directories
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFAULTSDIR
+</TD><TD valign=bottom>
+this macro may be set from command line or from the shell environment
+if the user wants to use a different set of
+<I>Defaults</I> files that is not located in the directory
+<B>DEFAULTS</B> in the source root directory.
+This may be used to hold two or more set of defaults that differ e.g. in the
+installation path or the C-compiler.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFAULTSROOT
+</TD><TD valign=bottom>
+this macro may be set in a leaf makefile, if that makefile wants to use
+a
+<I>Defaults</I> file that is not located in
+<I>$(DEFAULTSDIR)</I> in the source root.
+This may be used, if a sub tree in a big project needs a different setup.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFLTSDIR
+</TD><TD valign=bottom>
+This is an internally used macro that is set from
+<I>$(DEFAULTSDIR)</I> or from the internal defaults.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFLTSROOT
+</TD><TD valign=bottom>
+This is an internally used macro that is set from
+<I>$(DEFAULTSROOT)</I> or from the internal defaults.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFCCOM
+</TD><TD valign=bottom>
+the default name of the c-compiler. This is usually set in the file
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DEFINCDIRS
+</TD><TD valign=bottom>
+a list of directories that are searched by default in addition to
+the system include directories. If this macro is not set,
+<I>$(SRCROOT)/include</I> is used.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DIRNAME
+</TD><TD valign=bottom>
+this macro needs to be set in the makefile that is located in
+the
+<I>$(SRCROOT)</I> directory.
+The value should be either set to the name of the directory
+where the makefile is located or to
+<B>SRCROOT</B>. The value of this macro is updated automatically
+to follow the directory hierarchy.
+Do not change this macro in a make file other than the make file
+in the source root.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+DIRS
+</TD><TD valign=bottom>
+this macro needs to be set in a makefile that is located in
+a directory that contains diversion directories.
+It must contain a list of directory names where the diversions
+go to e.g.
+<B>DIRS= libfoo libbar libgarbage</B>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+HFILES
+</TD><TD valign=bottom>
+for normal operation,
+<I>makefiles</I> will automatically find which include files are needed
+for compilation.
+However, if you want to create a tag file that includes
+tags for definitions that occur within include files,
+you should set
+<I>HFILES</I> to be a list of include files containing such definitions.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INCDIRS
+</TD><TD valign=bottom>
+this macro will normally be a copy from
+<I>DEFINCDIRS</I>. You may however specify a different value in a leaf makefile
+or from command line. This will overwrite the defaults value.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INS_BASE
+</TD><TD valign=bottom>
+this macro has to be specified in the file
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I>. It must contain the path name of the root for installing
+general targets of the project.
+See
+<I>INSDIR</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INS_KBASE
+</TD><TD valign=bottom>
+this macro has to be specified in the file
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I>. It must contain the path name of the root for installing
+kernel modules from the project.
+See
+<I>INSDIR</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INSDIR
+</TD><TD valign=bottom>
+this macro has to be specified in the leaf makefile.
+It must contain the path name of a directory relative to
+<I>INS_BASE</I> or <I>INS_KBASE</I>. The target will be installed into
+<I>$(INS_BASE)/$(INSDIR) .</I> </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INSGRP
+</TD><TD valign=bottom>
+this macro may be set in a leaf makefile to set up the
+group id for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INSMODE
+</TD><TD valign=bottom>
+this macro may be set in a leaf makefile to set up the
+file permission for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+INSUSR
+</TD><TD valign=bottom>
+this macro may be set in a leaf makefile to set up the
+user id for installation
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+K_ARCH
+</TD><TD valign=bottom>
+this macro contains the kernel/machine architecture for the
+target machine (e.g.
+<I>sun3 sun4c sun4m sun4u 9000-725 aviion</I>). It is set to the output of
+<I>uname -m</I> converted to lower case.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+KARCH
+</TD><TD valign=bottom>
+this macro contains the kernel/machine architecture for the
+target machine (e.g.
+<I>sun3 sun4c sun4m sun4u 9000-725 aviion</I>). It is set to the output of
+<I>uname -m</I> converted to lower case.
+<!-- Need break --><BR>
+Do not change this macro unless you want to do a cross compilation.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LDFLAGS
+</TD><TD valign=bottom>
+The flags that are used with the linker.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LDLIBS
+</TD><TD valign=bottom>
+The internal macro that holds the
+libraries that are used while linking the target.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LDOPTS
+</TD><TD valign=bottom>
+The internal macro that contains the flags for the linker.
+Change this macro if you want to change the behavior.
+Use:
+<B>LDOPTS= value</B> If you want to override the default value. If you want to
+override the default linker flags from the command line
+call:
+<B>make &#146;LDOPTS=value&#146;</B> Use:
+<B>LDOPTS += value</B> If you want to add flags to the default value from within a makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LDOPTX
+</TD><TD valign=bottom>
+may be used if you want to add flags to the linker flags from the
+command line. Use:
+<B>make &#146;LDOPTX=value&#146;</B> </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LDPATH
+</TD><TD valign=bottom>
+the default library search path for the linker.
+This is usually set in the file
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LIB_KVM
+</TD><TD valign=bottom>
+a predefined macro that contains the operating system dependent
+name of a library
+that is needed by programs that read/write kernel virtual memory.
+Add
+<I>$(LIB_KVM)</I> to your list of libraries (e.g.
+<B>LIBS= -lintl $(LIB_KVM)</B>), if your target uses kvm.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LIB_MATH
+</TD><TD valign=bottom>
+a predefined macro that contains the operating system dependent
+name of a library
+that is needed by programs that use routines of the math library.
+Add
+<I>$(LIB_MATH)</I> to your list of libraries (e.g.
+<B>LIBS= -lintl $(LIB_MATH)</B>), if your target uses math subroutines.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LIB_SOCKET
+</TD><TD valign=bottom>
+a predefined macro that contains the operating system dependent
+name of a library
+that is needed by programs that use socket calls.
+Add
+<I>$(LIB_SOCKET)</I> to your list of libraries (e.g.
+<B>LIBS= -lintl $(LIB_SOCKET)</B>), if your target uses sockets. Note: this should (for portability reasons)
+even be done on systems that don&#146;t require a socket library because
+they have the socket interface inside libc.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+LIBS_PATH
+</TD><TD valign=bottom>
+this macro contains the path to a directory where those
+libraries are located, that have been build during
+a make run inside the current project.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+M_ARCH
+</TD><TD valign=bottom>
+this macro contains the machine architecture for the
+target machine (e.g.
+<I>sun3 sun4 ip22 i86pc i586 9000-725 aviion</I>). It is set to the output of
+<I>arch</I> converted to lower case.
+On systems, where
+<I>M_ARCH</I> is not available, it is set to the content of
+<I>K_ARCH</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MK_FILES
+</TD><TD valign=bottom>
+makefiles that divert into sub makes within the same directory
+must set
+<I>MK_FILES</I> to be a list of makefile names for the sub makes.
+Makefile names for sub makes should have a name that is build
+by adding
+<I>.mk</I> to the base name of the target that is defined inside the
+specific makefile.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKEPROG
+</TD><TD valign=bottom>
+Set this macro to the name of your make program if it does
+not support the macro
+<I>MAKE_NAME</I>. The make program
+<I>smake</I> is able to identify itself.
+If you want to use a make program that is not able
+to identify itself
+and it&#146;s name is not
+<I>make</I>, set
+<I>MAKEPROG</I> to the name of the make program.
+Currently only
+<I>gmake</I> is supported as alternate value for
+<I>MAKEPROG</I>. If you want to use an unsupported make program
+you have to check if it supports the needed features
+for
+<I>makefiles</I>. You must write your own rule files for that make program.
+If you want to use
+<I>gmake</I>, you should do
+<B>setenv MAKEPROG gmake</B> before you start
+<I>gmake</I> or use a shell script that does this job for you.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE
+</TD><TD valign=bottom>
+This macro is set up by the
+<I>make</I> program.
+It contains a path name that is sufficient to recursively
+call the same
+<I>make</I> program again (either that last path component or the full path
+name of the make program).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKEFLAGS
+</TD><TD valign=bottom>
+This macro is set up by the
+<I>make</I> program.
+It contains the command line flags,
+<I>make</I> is called with.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_ARCH
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the processor architecture of the target machine
+(e.g. mc68020, sparc, pentium).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_BRAND
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the brand of the target machine
+(e.g. Sun_Microsystems(e.g. ).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_HOST
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the host name of the target machine
+(e.g. duffy, sherwood, ghost).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_MACH
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the kernel architecture of the target machine
+(e.g. sun3, sun4c, sun4m, sun4u).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_MODEL
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the model name of the target machine
+(e.g. SUNW,SPARCstation-20).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_M_ARCH
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the machine architecture of the target machine
+(e.g. sun3, sun4).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_NAME
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the official name of the
+make program
+(e.g. make, smake, gmake).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_OS
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the operating system name of the target machine
+(e.g. sunos, linux, dgux).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_OSDEFS
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains operating system specific defines for the compiler
+(e.g. -D__SVR4).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_OSREL
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the operating system release name of the target machine
+(e.g. 5.5, 4.1.1).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MAKE_OSVERSION
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the operating system version of the target machine
+(e.g. generic).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MAKE_SERIAL
+</TD><TD valign=bottom>
+This macro is currently set up by
+<B>smake</B> only.
+It contains the serial number of the target machine
+(e.g. 1920098175).
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANDIR
+</TD><TD valign=bottom>
+all makefiles for manual pages must set this macro to the
+path name relative to
+<I>INS_BASE</I> where the manual page root dir for the project should be.
+Possible values for english manual pages are
+<I>man</I> or <I>share/man</I>, possible values for german manual pages are
+<I>man/de</I> or <I>share/man/de</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANFILE
+</TD><TD valign=bottom>
+makefiles for manual pages set this macro to the name of the
+troff source file for the manual page
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT
+</TD><TD valign=bottom>
+makefiles for manual pages set this macro to the macro name that
+contains the real section name for this manual page. This is
+necessary because bsd based system have different naming conventions than
+system V based systems. See below for a valid list of manual section
+macros.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_ADMIN
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for administrative
+commands and maintenance procedures.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_CMD
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for general
+user commands.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_DEMOS
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for demo
+commands.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_DEVICE
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+user level device interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_DRIVER
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+kernel level device driver interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_FILEFORM
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+file formats.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_GAMES
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for
+games.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_HDR
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for
+header files.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSECT_LIB
+</TD><TD valign=bottom>
+This macro contains the name of the sub directory for
+library function interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_MACROS
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+troff macros.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_NETWORK
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+user level network interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_SYSCALL
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+system call interfaces.
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSECT_TABLES
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the sub directory for
+tables.
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSTYLE
+</TD><TD valign=bottom>
+This macro contains the name that is used to find the right
+ordering conventions for manual pages.
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFFIX
+</TD><TD valign=bottom>
+makefiles for manual pages set this macro to the macro name that
+contains the real suffix for this manual page. This is
+necessary because bsd based system have different naming conventions than
+system V based systems. See below for a valid list of manual suffix
+macros.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_ADMIN
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for administrative
+commands and maintenance procedures.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_CMD
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for general
+user commands.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_DEMOS
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for demo
+commands.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_DEVICE
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+user level device interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_DRIVER
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+kernel level device driver interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_FILEFORM
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+file formats.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_GAMES
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for
+games.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_HDR
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for
+header files.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MANSUFF_LIB
+</TD><TD valign=bottom>
+This macro contains the name of the file suffix for
+library function interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_MACROS
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+troff macros.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_NETWORK
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+user level network interfaces.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_SYSCALL
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+system call interfaces.
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+MANSUFF_TABLES
+</TD></TR><TR valign=top><TD width=13%>&nbsp;</TD><TD>
+This macro contains the name of the file suffix for
+tables.
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+MARCH
+</TD><TD valign=bottom>
+this macro contains the machine architecture for the
+target machine (e.g.
+<I>sun3 sun4 ip22 i86pc i586 9000-725 aviion</I>). It is set to the output of
+<I>arch</I> converted to lower case.
+On systems, where
+<I>M_ARCH</I> is not available, it is set to the content of
+<I>K_ARCH</I>. <!-- Need break --><BR>
+Do not change this macro unless you want to do a cross compilation.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+O_ARCH
+</TD><TD valign=bottom>
+this macro contains the name of the operating system
+converted to lower case.
+It is usually the output of:
+<I>uname -s</I>. It may contain a modified name if the compilation rules
+for different version of the operating system differ (e.g.
+on
+<I>SunOS</I> and <I>Solaris</I>, the official operation system name in both cases is
+<I>SunOS</I>). <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OARCH
+</TD><TD valign=bottom>
+this macro contains the object architecture that is used
+for architecture dependent sub directories.
+It is set to:
+<I>$(PARCH)-$(O_ARCH)-$(C_ARCH)</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OARCHDIR
+</TD><TD valign=bottom>
+this macro contains the concatenation of
+<I>OBJ/</I> and
+<I>$(OARCH)</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OFILES
+</TD><TD valign=bottom>
+this macro contains the list of objects that are the
+the dependency list for the target.
+It is constructed from the list of
+assembler source files,
+c source files,
+lex source files and
+yacc source files.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OINCSDIR
+</TD><TD valign=bottom>
+this macro contains the concatenation of
+<I>$(SRCROOT)/incs/</I> and
+<I>$(OARCH)</I>. It is the location where include files that are made within a make run
+and subject to global use will be placed.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OLIBSDIR
+</TD><TD valign=bottom>
+this macro contains the concatenation of
+<I>$(SRCROOT)/libs/</I> and
+<I>$(OARCH)</I>. It is the location where libraries that are made within a make run
+will be placed.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OSDEFS
+</TD><TD valign=bottom>
+this macro contains operating system specific c-preprocessor
+definitions.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OSNAME
+</TD><TD valign=bottom>
+the unmodified name of the operating system converted to lower case.
+See
+<I>O_ARCH</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+OSREL
+</TD><TD valign=bottom>
+the release of the operating system.
+<!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+P_ARCH
+</TD><TD valign=bottom>
+this macro contains the processor architecture for the
+target machine (e.g.
+<I>mc68020 mc88200 sparc pentium</I>). It is set to the output of
+<I>uname -p</I> converted to lower case.
+On systems, where
+<I>P_ARCH</I> is not available, it is set to the content of
+<I>K_ARCH</I>. <!-- Need break --><BR>
+Do not change this macro.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+PARCH
+</TD><TD valign=bottom>
+this macro contains the processor architecture for the
+target machine (e.g.
+<I>mc68020 mc88200 sparc pentium</I>). It is set to the output of
+<I>uname -p</I> converted to lower case.
+On systems, where
+<I>P_ARCH</I> is not available, it is set to the content of
+<I>K_ARCH</I>. <!-- Need break --><BR>
+Do not change this macro unless you want to do a cross compilation.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+RULESDIR
+</TD><TD valign=bottom>
+the value of this macro must be set before
+the rules file
+<I>$(SRCROOT)/$(RULESDIR/rules.top</I> is included.
+If you want to test the behavior of a modified version
+of the
+<I>makefiles</I> in
+<I>RULESDIR</I>, put a copy into an alternate directory, modify one or more
+files in it and then use make with a different value of
+<I>RULESDIR</I>, that points to the alternate directory.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+RUNPATH
+</TD><TD valign=bottom>
+is evaluated on systems, where
+<I>LD_RUN_PATH</I> is supported.
+It contains the default library search path for dynamic linked targets
+on runtime.
+This search path will be stored inside the target.
+This is usually set in the file
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults</I> or
+<I>$(DEFLTSROOT)/$(DEFLTSDIR)/Defaults.$(O_ARCH)</I>. Note that older systems will use
+<I>LD_LIBRARY_PATH</I> for this purpose too.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+SCRFILE
+</TD><TD valign=bottom>
+this macro must be set in a leaf makefile for shell scripts to define
+the source for that script file.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+SRCFILE
+</TD><TD valign=bottom>
+this macro must be set in a leaf makefile for localized files to define
+the source for that file.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+SRCROOT
+</TD><TD valign=bottom>
+this macro contains the relative position to the project&#146;s
+source root directory.
+The value of this macro must be set before
+the rules file
+<I>$(SRCROOT)/$(RULESDIR/rules.top</I> is included.
+<I>SRCROOT</I> should be set to
+<I>../..</I> if the appropriate leaf makefile is located two directory
+levels below the source route.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+SUBARCHDIR
+</TD><TD valign=bottom>
+may be set to put the object files and the target into
+a different directory than usual.
+<I>SUBARCHDIR</I> will modify the value of
+<I>ARCHDIR</I>. If you want to make a target that is compiled for
+<I>dbx</I> you may use:
+<I>make COPTX=-g SUBARCHDIR=-dbx</I>. </TD></TR>
+<TR valign=top><TD width=13% nowrap>
+TARGET
+</TD><TD valign=bottom>
+all makefiles, that are not referring to library targets or
+sub makes / sub dir makes,
+must define
+<I>TARGET</I> to be the output file name of the final link operation.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+TARGETLIB
+</TD><TD valign=bottom>
+all makefiles that are used to make libraries
+must define
+<I>TARGETLIB</I> to be the central part of the target library.
+If you want to make e.g.
+<I>libfoo</I> define
+<I>TARGETLIB= foo</I>. This is needed to allow operating systems to have different naming
+conventions for libraries.
+If you are making a non shared library, the example above
+would result in a filename:
+<I>libfoo.a</I> for the real target.
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+TARGETMAN
+</TD><TD valign=bottom>
+this macro must be set in a leaf makefile for manual pages to define
+the base name for that manual page (not including the suffix).
+</TD></TR>
+<TR valign=top><TD width=13% nowrap>
+XMK_FILE
+</TD><TD valign=bottom>
+makefiles that want to install manual pages should set
+<I>XMK_FILE</I> to
+<B>Makefile.man</B> to avoid having to install a diversion make file.
+The make file found in
+<I>XMK_FILE</I> will be processed only if
+<I>make</I> is called with the target
+<I>install</I>. <P>
+</TD></TR>
+<TR></TR></TABLE></BLOCKQUOTE>
+<A name=>
+
+     <H3>GETTING STARTED</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+To set up a new project, first copy the
+<I>RULES</I> and <I>TEMPLATES</I> directories and all its content into the project&#146;s root directory.
+<P>
+Then copy a top level makefile, a
+<I>Defaults</I> file and a
+<I>Targetdirs.archname</I> file into the project&#146;s root directory.
+<P>
+Then create the following directories:
+<I>cmd</I>, <I>lib</I>, <I>include</I>. <P>
+Now start creating target directories e.g below
+<I>cmd</I> and <I>lib</I>. Don&#146;t forget to create a makefile and an appropriate
+<I>Targetdirs.archname</I> file on each node directory.
+<P>
+</BLOCKQUOTE>
+<A name=3>
+
+     <H3>EXAMPLES</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+If you want to set up a private copy of parts of a project,
+you should choose a directory inside your directory tree that will become
+the shadow projects source root directory.
+Then create symbolic links named
+<I>RULES</I> and <I>TEMPLATES</I> to the real source root.
+If you don&#146;t want to modify the global include files,
+create a symbolic link to the
+<I>include</I> directory too, else copy the include directory and its content.
+copy the top level makefile, the
+<I>Defaults</I> file and the
+<I>Targetdirs.archname</I> file.
+<P>
+Finally copy the desired sub tree together with all
+makefiles and the
+<I>Targetdirs.archname</I> files that are located in the directories above
+your part of the project that you want to have separately.
+<P>
+</BLOCKQUOTE>
+<A name=4>
+
+     <H3>FILES</H3>
+
+</A>
+<BLOCKQUOTE>
+&#46;../RULES/*
+<!-- Need break --><BR>
+&#46;../DEFAULTS/*
+<!-- Need break --><BR>
+&#46;../TARGETS/*
+<!-- Need break --><BR>
+&#46;../TEMPLATES/*
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>SEE ALSO</H3>
+
+</A>
+<BLOCKQUOTE>
+<B>makerules</B>(4),
+<B>make</B>(1),
+<B>gmake</B>(1),
+<B>smake</B>(1).
+<P>
+If you want to know, how to add new rules or how to add support
+for new operating systems or compilers look into
+<B>makerules</B>(4).
+<P>
+</BLOCKQUOTE>
+<A name=5>
+
+     <H3>DIAGNOSTICS</H3>
+
+</A>
+<BLOCKQUOTE>
+Diagnostic messages depend on the make program.
+Have a look at the appropriate man page.
+<P>
+</BLOCKQUOTE>
+<A name=6>
+
+     <H3>NOTES</H3>
+
+</A>
+<BLOCKQUOTE>
+The scope of this manual is only the usage of
+<B>leaf makefiles</B>. If you want to make changes to the
+<B>make rules</B> have a look at
+<B>makerules</B>(4).
+<P>
+<I>makefiles</I> can be used with
+<I>Sunpro make</I>, <I>Gnu make</I> and
+<I>smake</I>. Although Gnu make runs on many platforms, it has no useful debug
+output.
+<P>
+Use
+<I>Sunpro make</I> or <I>smake</I> if you have problems with a makefile.
+<I>Sunpro make</I> and <I>smake</I>, both have a -D flag, that allows you to watch the makefiles
+after the first expansion. Use this option, if you are in doubt
+if your makefile gets expanded the right way and if the right
+rules are included.
+There is also a -d option that gives debugging output while
+make is running. If you want more output, use -dd, -ddd and so on.
+<P>
+<I>Smake</I> has an option -xM that shows you the include dependency for
+make rules.
+<P>
+<P>
+<!-- ignored unsupported tag .ne -->
+The following is a list of all macros that are used in
+<I>makefiles</I>. Do not use them unless their meaning has been explained
+before.
+<P>
+<P>
+<B>-O_ARCH</B>, <B>.OBJDIR</B>, <B>.SEARCHLIST</B>, <B>ALLTARGETS</B>, <B>AR</B>, <B>ARCH</B>, <B>ARCHDIR</B>, <B>ARCHDIRX</B>, <B>ARCH_DONE</B>, <B>ARFLAGS</B>, <B>AS</B>, <B>ASFLAGS</B>, <B>ASMFILES</B>, <B>ASOPTS</B>, <B>ASOPTX</B>, <B>CC</B>, <B>CCOM</B>, <B>CCOM_DEF</B>, <B>CFILES</B>, <B>CFLAGS</B>, <B>CHGRP</B>, <B>CHMOD</B>, <B>CHOWN</B>, <B>CLEAN_FILES</B>, <B>CLEAN_FILEX</B>, <B>CLOBBER_FILEX</B>, <B>COPTDYN</B>, <B>COPTGPROF</B>, <B>COPTOPT</B>, <B>COPTS</B>, <B>COPTX</B>, <B>CPP</B>, <B>CPPFLAGS</B>, <B>CPPOPTS</B>, <B>CPPOPTX</B>, <B>CTAGS</B>, <B>CURDIR</B>, <B>CWARNOPTS</B>, <B>CWOPTS</B>, <B>C_ARCH</B>, <B>DEFAULTSDIR</B>, <B>DEFAULTSROOT</B>, <B>DEFCCOM</B>, <B>DEFCCOM_DEF</B>, <B>DEFINCDIRS</B>, <B>DEFINCDIRS_DEF</B>, <B>DEFINSGRP</B>, <B>DEFINSMODE</B>, <B>DEFINSUSR</B>, <B>DEFUMASK</B>, <B>DEF_ROOT</B>, <B>DEP_DEP</B>, <B>DEP_FILE</B>, <B>DEP_SUFFIX</B>, <B>DIRNAME</B>, <B>DIRS</B>, <B>DYNLD</B>, <B>ETAGS</B>, <B>FLOAT_OPTIONS</B>, <B>HFILES</B>, <B>HOSTNAME</B>, <B>INCDIRS</B>, <B>INSDIR</B>, <B>INSGRP</B>, <B>INSGRP_DEF</B>, <B>INSMODE</B>, <B>INSMODE_DEF</B>, <B>INSTALL</B>, <B>INSUSR</B>, <B>INSUSR_DEF</B>, <B>INS_BASE</B>, <B>INS_KBASE</B>, <B>KARCH</B>, <B>KARCH_DEF</B>, <B>KDEFINES</B>, <B>K_ARCH</B>, <B>LD</B>, <B>LDCC</B>, <B>LDFLAGS</B>, <B>LDLIBS</B>, <B>LDOPTDYN</B>, <B>LDOPTS</B>, <B>LDOPTX</B>, <B>LDPATH</B>, <B>LIBS</B>, <B>LIBS_PATH</B>, <B>LIBX</B>, <B>LIB_KVM</B>, <B>LIB_MATH</B>, <B>LIB_PREFIX</B>, <B>LIB_SOCKET</B>, <B>LIB_SUFFIX</B>, <B>LN</B>, <B>LNDYNLIB</B>, <B>LOCALIZE</B>, <B>LORDER</B>, <B>MAKE</B>, <B>MK_FILES</B>, <B>MAKEPROG</B>, <B>MAKE_ARCH</B>, <B>MAKE_HOST</B>, <B>MAKE_MACH</B>, <B>MAKE_M_ARCH</B>, <B>MAKE_NAME</B>, <B>MAKE_OS</B>, <B>MAKE_OSDEFS</B>, <B>MAKE_OSREL</B>, <B>MANDIR</B>, <B>MANFILE</B>, <B>MANSECT</B>, <B>MANSECT_ADMIN</B>, <B>MANSECT_CMD</B>, <B>MANSECT_DEMOS</B>, <B>MANSECT_DEVICE</B>, <B>MANSECT_DRIVER</B>, <B>MANSECT_FILEFORM</B>, <B>MANSECT_GAMES</B>, <B>MANSECT_HDR</B>, <B>MANSECT_LIB</B>, <B>MANSECT_MACROS</B>, <B>MANSECT_NETWORK</B>, <B>MANSECT_SYSCALL</B>, <B>MANSECT_TABLES</B>, <B>MANSTYLE</B>, <B>MANSUFFIX</B>, <B>MANSUFF_ADMIN</B>, <B>MANSUFF_CMD</B>, <B>MANSUFF_DEMOS</B>, <B>MANSUFF_DEVICE</B>, <B>MANSUFF_DRIVER</B>, <B>MANSUFF_FILEFORM</B>, <B>MANSUFF_GAMES</B>, <B>MANSUFF_HDR</B>, <B>MANSUFF_LIB</B>, <B>MANSUFF_MACROS</B>, <B>MANSUFF_NETWORK</B>, <B>MANSUFF_SYSCALL</B>, <B>MANSUFF_TABLES</B>, <B>MARCH</B>, <B>MARCH_DEF</B>, <B>MKDEP</B>, <B>MKDEP_OUT</B>, <B>MKDIR</B>, <B>MV</B>, <B>M_ARCH</B>, <B>OARCH</B>, <B>OARCHDIR</B>, <B>OFILES</B>, <B>OINCSDIR</B>, <B>OLIBSDIR</B>, <B>OSDEFS</B>, <B>OSNAME</B>, <B>OSREL</B>, <B>O_ARCH</B>, <B>PALLDEP_FILE</B>, <B>PARCH</B>, <B>PARCH_DEF</B>, <B>PASMFILES</B>, <B>PDEP_FILE</B>, <B>PLOFILES</B>, <B>POFILES</B>, <B>PTARGET</B>, <B>PTARGET_BASE</B>, <B>PYOFILES</B>, <B>P_ARCH</B>, <B>RANLIB</B>, <B>RM</B>, <B>RMDEP</B>, <B>RMTARGET</B>, <B>RM_FORCE</B>, <B>RM_RECURS</B>, <B>RM_RF</B>, <B>RULESDIR</B>, <B>RUNPATH</B>, <B>SCRFILE</B>, <B>SHELL</B>, <B>SHL_SUFFIX</B>, <B>SRCFILE</B>, <B>SRCLIBS</B>, <B>SRCROOT</B>, <B>SUBARCH</B>, <B>SUBARCHDIR</B>, <B>SYMLINK</B>, <B>TAGS</B>, <B>TARGET</B>, <B>TARGETLIB</B>, <B>TARGETMAN</B>, <B>TARGET_BASE</B>, <B>TARGET_PATH</B>, <B>TSORT</B>, <B>UMASK</B>, <B>UMASK_DEF</B>, <B>UMASK_VAL</B>, <B>XARCH</B>, <B>XK_ARCH</B>, <B>XMK_FILE</B>, <B>XMAKEPROG</B>, <B>XM_ARCH</B>, <B>XP_ARCH</B>, <B>_CCOM</B>, <B>_DEFAULTSDIR</B>, <B>_DEFCCOM</B>, <B>_DEFINSGRP</B>, <B>_DEFINSMODE</B>, <B>_DEFINSUSR</B>, <B>_DEFUMASK</B>, <B>_DIRNAME</B>, <B>_INCDIRS</B>, <B>_MAKEPROG</B>, <B>_MARCH</B>, <B>_M_ARCH</B>, <B>_O_ARCH</B>, <B>_PARCH</B>, <B>_P_ARCH</B>, <B>_UNIQ</B>, <B>__CCOM</B>, <B>__DEFAULTSDIR</B>, <B>__DEFCCOM</B>, <B>__DEFINSGRP</B>, <B>__DEFINSMODE</B>, <B>__DEFINSUSR</B>, <B>__DEFUMASK</B>, <B>__DIRNAME</B>, <B>__INCDIRS</B>, <B>__MAKEPROG</B>, <B>__MARCH</B>, <B>__M_ARCH</B>, <B>__PARCH</B>, <B>__P_ARCH</B>, <P>
+</BLOCKQUOTE>
+<A name=7>
+
+     <H3>BUGS</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+</BLOCKQUOTE>
+<A name=>
+
+     <H3>Source Tree Hierarchy</H3>
+
+</A>
+<BLOCKQUOTE>
+<P>
+The following outline gives a quick tour through a typical
+source hierarchy:
+<P>
+<!-- ignored unsupported tag .na -->
+<!-- ignored unsupported tag .nh -->
+<TABLE cellpadding=0 cellspacing=0>
+<TR valign=top><TD width=6% nowrap>
+<B>.../</B> </TD><TD valign=bottom>
+root directory of the source tree
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the top Makefile
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories that are needed
+for that project.
+If the system needs different target lists depending
+on the target system architecture , use target specific files in
+<B>.../TARGETS/</B> </TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../RULES/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the location of makefiles (included rules)
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>rules.top</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the mandatory include rules (needed to setup basic rules)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.aux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a non localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.cmd</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make an ordinary command (like /bin/sh)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.drv</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a device driver
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.lib</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a standard (nonshared) library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.loc</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized manual page
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.scr</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to install a localized shell script
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.shl</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make a shared library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.mks</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make more than one target in a specific directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>rules.dir</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+rules needed to make targets that are located in sub directories
+to the current directory
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../DEFAULTS/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+default definitions for various target architectures are
+located in this directory. Templates for some architectures can
+be found in the
+<I>.../TEMPLATES/</I> directory.
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Defaults</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+default definitions for that source tree. System dependent
+definitions are in
+<B>.../DEFAULTS/Defaults.*</B> </TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../TARGETS/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+target list definitions for various target architectures are
+located in this directory.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../TEMPLATES/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+templates that should be used inside the project
+(rename to Makefile, if it is the only makefile in that directory,
+rename to
+<I>target.mk,</I> if there is more than one target in that directory)
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Defaults</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Defaults file for the source root directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Defaults.linux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Defaults file for
+<I>linux</I>. This should be installed in the
+<B>.../DEFAULTS/</B> directory.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.root</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for the source root directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.aux</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a non localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.cmd</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for an ordinary command (like /bin/sh)
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.lib</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a standard (nonshared) library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.loc</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized auxiliary file
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized manual page
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile_de.man</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized manual page in the german locale
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.scr</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a localized shell script
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.shl</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a shared library
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.drv</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for a device driver
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.mks</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for more than one target in a specific directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Makefile.dir</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+Makefile for targets that are located in sub directories
+to the current directory
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../cmd/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+source tree for normal commands
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>cmd</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>myprog</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>myprog/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where the sources for a specific command are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+Makefile
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+makefile for
+<I>myprog</I> </TD></TR>
+<TR valign=top><TD colspan=2>
+Makefile.man
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+makefile for the manual page of
+<I>myprog</I> </TD></TR>
+<TR valign=top><TD colspan=2>
+mprog.c
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+source for myprog
+</TD></TR>
+<TR valign=top><TD colspan=2>
+mprog.tr
+</TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+troff source for the manual page of myprog
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>OBJ/</B> </TD><TD valign=bottom>
+directory where system specific sub directories are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binaries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE><!-- ignored unsupported tag .ne -->
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../lib/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where the sources for a libraries are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>lib</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>libfoo</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>libfoo/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory where all source files for libfoo are located
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../kernel</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for kernel modules
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>kernel</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>drv</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>drv/</B> </TD><TD valign=bottom>
+directory where drivers are located
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>Makefile</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+the makefile for the
+<I>drv</I> sub directory
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>Targetdirs.sun4m</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+a file containing a list of directories like
+<I>mydrv</I> (see below) that are needed
+for that specific architecture.
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+<B>mydrv/</B> </TD><TD valign=bottom>
+source for a specific driver
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../include</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for global include files that are used in that project
+</TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../bins</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binary programs that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for binaries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../libs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for libraries that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for libraries that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD colspan=2>
+<B>.../incs</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for include files that are created/needed while compiling
+the project
+<TABLE width=100% cellpadding=0 cellspacing=0>
+<TR valign=top><TD colspan=2>
+<B>sparc-sunos5-cc/</B> </TD></TR><TR valign=top><TD width=6%>&nbsp;</TD><TD>
+directory for include files that belong to a specific system
+</TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></TD></TR>
+<TR valign=top><TD width=6% nowrap>
+&#46;..
+</TD><TD valign=bottom>
+</TD></TR>
+</TABLE></BLOCKQUOTE>
+<!-- ignored unsupported tag .ad -->
+<P>
+<A name=8>
+
+     <H3>AUTHOR</H3>
+
+</A>
+<BLOCKQUOTE>
+<PRE>
+J..org Schilling
+Seestr. 110
+D-13353 Berlin
+Germany
+</PRE>
+<P>
+Mail bugs and suggestions to:
+<P>
+<B></B> <A HREF="mailto:joerg@schily.isdn.cs.tu-berlin.de">joerg@schily.isdn.cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:js@cs.tu-berlin.de">js@cs.tu-berlin.de</A>
+or
+<B></B> <A HREF="mailto:jes@fokus.gmd.de">jes@fokus.gmd.de</A>
+</BLOCKQUOTE>
+<P><HR>
+<TABLE width=100%><TR> <TD width=33%><I>J..org Schilling</I></TD> <TD width=33% align=center>makefiles (4L)</TD> <TD align=right width=33%><I>14. February 1997</I></TD> </TR></TABLE><FONT SIZE=-1>Generated by <A HREF="http://www.squarebox.co.uk/download/manServer.shtml">manServer 1.07</A> from e:\usr\local\smake\man\man5\makefiles.5 using man macros.</FONT>
+</BODY></HTML>
